@@ -1,0 +1,103 @@
+/* Home dashboard: live job-search overview shown for a fresh chat. */
+#welcome-screen.dashboard-home {
+  position: absolute;
+  inset: 48px 0 104px;
+  width: 100%;
+  max-width: none;
+  transform: none;
+  display: block;
+  overflow: auto;
+  padding: 30px clamp(22px, 4vw, 62px) 42px;
+  text-align: left;
+  pointer-events: auto;
+  color: var(--fg);
+  scrollbar-width: thin;
+  animation: dashboard-enter .32s ease-out both;
+}
+@keyframes dashboard-enter { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.dashboard-shell { width: min(1180px, 100%); margin: 0 auto; }
+.dashboard-hero { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:25px; }
+.dashboard-eyebrow,.card-kicker { margin:0 0 5px; color:color-mix(in srgb,var(--fg) 48%,transparent); font-size:11px; font-weight:650; letter-spacing:.12em; text-transform:uppercase; }
+.dashboard-hero h2 { margin:0; font-family:Georgia,'Times New Roman',serif; font-weight:500; font-size:clamp(30px,4vw,47px); letter-spacing:-.03em; }
+.dashboard-dot { color:var(--brand-color,var(--red)); }
+.dashboard-subtitle { margin:7px 0 0; color:color-mix(in srgb,var(--fg) 56%,transparent); font-size:14px; }
+.dashboard-hero-actions { display:flex; gap:9px; flex-wrap:wrap; justify-content:flex-end; }
+.dashboard-action,.dashboard-shortcuts button,.dashboard-shortcuts a { font:inherit; }
+.dashboard-action { border:1px solid var(--border); border-radius:9px; padding:10px 14px; background:color-mix(in srgb,var(--panel) 85%,transparent); color:var(--fg); cursor:pointer; font-size:12px; }
+.dashboard-action.primary { background:var(--brand-color,var(--red)); color:#fff; border-color:transparent; font-weight:650; }
+.dashboard-action:hover { filter:brightness(1.09); }
+
+.dashboard-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border:1px solid var(--border); border-radius:13px; overflow:hidden; background:color-mix(in srgb,var(--panel) 76%,transparent); margin-bottom:15px; }
+.dashboard-stats article { padding:16px 18px; display:grid; grid-template-columns:1fr auto; align-items:end; gap:1px 8px; border-right:1px solid var(--border); }
+.dashboard-stats article:last-child { border-right:0; }
+.dashboard-stats span { grid-column:1/-1; color:color-mix(in srgb,var(--fg) 54%,transparent); font-size:11px; }
+.dashboard-stats strong { font:500 28px/1 Georgia,serif; }
+.dashboard-stats small { color:color-mix(in srgb,var(--fg) 40%,transparent); font-size:10px; }
+
+.dashboard-grid { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr); gap:15px; }
+.dashboard-card { min-width:0; background:color-mix(in srgb,var(--panel) 82%,transparent); border:1px solid var(--border); border-radius:13px; padding:18px; }
+.dashboard-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:15px; margin-bottom:15px; }
+.dashboard-card h3 { margin:0; font-size:15px; font-weight:650; }
+.card-link { border:0; background:none; color:color-mix(in srgb,var(--fg) 48%,transparent); text-decoration:none; font:inherit; font-size:11px; cursor:pointer; padding:3px 0; white-space:nowrap; }
+.card-link:hover { color:var(--brand-color,var(--red)); }
+.schedule-layout { display:grid; grid-template-columns:minmax(260px,.9fr) minmax(230px,1.1fr); gap:22px; }
+
+.mini-calendar { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; align-content:start; }
+.mini-calendar .month-label { grid-column:1/-1; font-weight:650; font-size:13px; margin-bottom:8px; }
+.mini-calendar .dow { text-align:center; color:color-mix(in srgb,var(--fg) 34%,transparent); font-size:9px; padding-bottom:4px; }
+.mini-calendar .day { position:relative; min-height:30px; display:grid; place-items:center; border-radius:7px; font-size:11px; color:color-mix(in srgb,var(--fg) 74%,transparent); }
+.mini-calendar .day.muted { opacity:.2; }
+.mini-calendar .day.today { background:var(--brand-color,var(--red)); color:white; font-weight:700; }
+.mini-calendar .day.has-event:not(.today)::after { content:""; position:absolute; bottom:3px; width:3px; height:3px; border-radius:50%; background:var(--brand-color,var(--red)); }
+.upcoming-list,.stage-list,.attention-list,.recent-jobs { display:grid; gap:8px; }
+.event-row,.stage-row,.attention-row,.recent-job { display:flex; align-items:center; gap:11px; padding:9px 0; border-bottom:1px solid color-mix(in srgb,var(--border) 65%,transparent); min-width:0; }
+.recent-job,.attention-row { color:inherit; text-decoration:none; }
+.event-row:last-child,.stage-row:last-child,.attention-row:last-child,.recent-job:last-child { border-bottom:0; }
+.event-date { width:40px; flex:0 0 40px; text-align:center; border:1px solid var(--border); border-radius:8px; padding:4px 2px; }
+.event-date strong { display:block; font:600 16px/1 Georgia,serif; }
+.event-date span { font-size:8px; letter-spacing:.08em; text-transform:uppercase; color:color-mix(in srgb,var(--fg) 48%,transparent); }
+.row-copy { min-width:0; flex:1; }
+.row-copy strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; }
+.row-copy small { display:block; color:color-mix(in srgb,var(--fg) 42%,transparent); font-size:10px; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.stage-icon { width:31px; height:31px; flex:0 0 31px; display:grid; place-items:center; border-radius:9px; background:color-mix(in srgb,var(--brand-color,var(--red)) 14%,transparent); color:var(--brand-color,var(--red)); font-size:13px; }
+.status-pill { margin-left:auto; padding:3px 7px; border-radius:999px; border:1px solid var(--border); color:color-mix(in srgb,var(--fg) 58%,transparent); font-size:9px; text-transform:capitalize; white-space:nowrap; }
+.status-pill.interviewing,.status-pill.offer { color:#61c995; border-color:color-mix(in srgb,#61c995 45%,var(--border)); }
+.status-pill.rejected { color:#ef7f88; }
+.attention-row { align-items:flex-start; }
+.attention-mark { width:7px; height:7px; border-radius:50%; background:var(--brand-color,var(--red)); margin-top:6px; flex:0 0 7px; }
+.dashboard-empty,.dashboard-loading { padding:18px 4px; color:color-mix(in srgb,var(--fg) 40%,transparent); font-size:11px; }
+.dashboard-empty a { color:var(--brand-color,var(--red)); }
+
+.dashboard-shortcuts { display:flex; gap:8px; margin:15px 0 2px; }
+.dashboard-shortcuts a,.dashboard-shortcuts button { border:1px solid var(--border); background:transparent; color:color-mix(in srgb,var(--fg) 58%,transparent); text-decoration:none; border-radius:9px; padding:9px 12px; font-size:11px; cursor:pointer; }
+.dashboard-shortcuts span { color:var(--brand-color,var(--red)); margin-right:4px; }
+.dashboard-shortcuts a:hover,.dashboard-shortcuts button:hover { color:var(--fg); background:color-mix(in srgb,var(--panel) 75%,transparent); }
+.dashboard-incognito { position:fixed; right:18px; bottom:17px; margin:0; z-index:2; }
+
+.chat-container.welcome-active .chat-input-bar { margin:0 auto 14px; width:min(1180px,calc(100% - 44px)); max-width:1180px; }
+.chat-container.welcome-active .chat-top-bar { opacity:.3; }
+
+@media(max-width:900px){
+  .dashboard-grid { grid-template-columns:1fr; }
+  .stages-card { order:2; }.applications-card { order:3; }.attention-card { order:4; }
+}
+@media(max-width:700px){
+  #welcome-screen.dashboard-home { inset:43px 0 92px; padding:18px 14px 30px; }
+  .dashboard-hero { align-items:flex-start; flex-direction:column; margin-bottom:18px; }
+  .dashboard-hero-actions { justify-content:flex-start; }
+  .dashboard-stats { grid-template-columns:repeat(2,1fr); }
+  .dashboard-stats article:nth-child(2) { border-right:0; }
+  .dashboard-stats article:nth-child(-n+2) { border-bottom:1px solid var(--border); }
+  .schedule-layout { grid-template-columns:1fr; }
+  .dashboard-card { padding:15px; }
+  .dashboard-shortcuts { overflow-x:auto; padding-bottom:4px; }
+  .dashboard-shortcuts > * { flex:0 0 auto; }
+  .dashboard-incognito { display:none; }
+  .chat-container.welcome-active .chat-input-bar { width:100%; margin:0; }
+  .chat-container.welcome-active:has(.chat-input-bar:focus-within) #welcome-screen,
+  .chat-container.welcome-active:has(textarea#message:not(:placeholder-shown)) #welcome-screen { opacity:0; pointer-events:none; }
+}
+@media(max-height:650px){ #welcome-screen.dashboard-home { top:43px; opacity:1; } }
+@media(max-height:500px){ #welcome-screen.dashboard-home { top:43px; opacity:1; } }
+@media(max-height:380px){ #welcome-screen.dashboard-home { opacity:1; pointer-events:auto; } }

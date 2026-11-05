@@ -850,6 +850,121 @@ class EditorDraft(TimestampMixin, Base):
     )
 
 
+class JobApplication(TimestampMixin, Base):
+    """A saved job posting and its application lifecycle.
+
+    The posting fields are intentionally stored separately from the raw scrape
+    metadata so later email matching can use stable company/title/url values
+    without trusting or repeatedly parsing third-party page content.
+    """
+    __tablename__ = "job_applications"
+
+    id              = Column(String, primary_key=True, index=True)
+    owner           = Column(String, nullable=True, index=True)
+    external_job_id = Column(String, nullable=True, default="", index=True)
+    company         = Column(String, nullable=False, default="")
+    title           = Column(String, nullable=False, default="")
+    location        = Column(String, nullable=True, default="")
+    employment_type = Column(String, nullable=True, default="")
+    salary          = Column(String, nullable=True, default="")
+    job_url         = Column(Text, nullable=False)
+    apply_url       = Column(Text, nullable=True, default="")
+    source_site     = Column(String, nullable=True, default="")
+    description     = Column(Text, nullable=True, default="")
+    posted_at       = Column(String, nullable=True, default="")
+    valid_through   = Column(String, nullable=True, default="")
+    applied_at      = Column(String, nullable=True, default="")
+    status          = Column(String, nullable=False, default="saved", index=True)
+    notes           = Column(Text, nullable=True, default="")
+    raw_metadata    = Column(Text, nullable=True, default="{}")
+
+    __table_args__ = (
+        Index('ix_job_applications_owner_updated', 'owner', 'updated_at'),
+        Index('ix_job_applications_owner_status', 'owner', 'status'),
+    )
+
+
+class JobAiSettings(TimestampMixin, Base):
+    """Owner-scoped Gemini fallback configuration for job extraction.
+
+    ``api_key`` is encrypted by ``src.secret_storage`` before it reaches this
+    table.  API responses expose only whether a key is present.
+    """
+    __tablename__ = "job_ai_settings"
+
+    id       = Column(String, primary_key=True, index=True)
+    owner    = Column(String, nullable=False, unique=True, index=True)
+    enabled  = Column(Boolean, nullable=False, default=False)
+    provider = Column(String, nullable=False, default="gemini")
+    model    = Column(String, nullable=False, default="gemini-2.5-flash-lite")
+    api_key  = Column(Text, nullable=True, default="")
+
+
+class JobEmailMatch(TimestampMixin, Base):
+    """A read-only mailbox finding awaiting explicit user review."""
+    __tablename__ = "job_email_matches"
+
+    id                 = Column(String, primary_key=True, index=True)
+    owner              = Column(String, nullable=False, index=True)
+    job_application_id = Column(String, ForeignKey("job_applications.id", ondelete="CASCADE"), nullable=False, index=True)
+    email_account_id   = Column(String, ForeignKey("email_accounts.id", ondelete="CASCADE"), nullable=False, index=True)
+    folder             = Column(String, nullable=False, default="INBOX")
+    email_uid          = Column(String, nullable=False)
+    message_id         = Column(String, nullable=True, default="")
+    sender             = Column(String, nullable=True, default="")
+    subject            = Column(String, nullable=True, default="")
+    received_at        = Column(String, nullable=True, default="")
+    proposed_status    = Column(String, nullable=False)
+    confidence         = Column(Float, nullable=False, default=0.0)
+    reason             = Column(String, nullable=True, default="")
+    evidence           = Column(Text, nullable=True, default="")
+    review_state       = Column(String, nullable=False, default="pending", index=True)
+
+    job = relationship("JobApplication")
+
+    __table_args__ = (
+        Index(
+            "uq_job_email_match_message",
+            "owner", "email_account_id", "folder", "email_uid", "job_application_id",
+            unique=True,
+        ),
+        Index("ix_job_email_matches_owner_state", "owner", "review_state"),
+    )
+
+
+class PackageTrackerSettings(TimestampMixin, Base):
+    """Owner-scoped parcel tracking provider credentials."""
+    __tablename__ = "package_tracker_settings"
+    id       = Column(String, primary_key=True, index=True)
+    owner    = Column(String, nullable=False, unique=True, index=True)
+    provider = Column(String, nullable=False, default="ship24")
+    api_key  = Column(Text, nullable=True, default="")
+
+
+class TrackedPackage(TimestampMixin, Base):
+    """A package registered with the user's tracking provider."""
+    __tablename__ = "tracked_packages"
+    id              = Column(String, primary_key=True, index=True)
+    owner           = Column(String, nullable=False, index=True)
+    tracking_number = Column(String, nullable=False)
+    label           = Column(String, nullable=True, default="")
+    carrier_code    = Column(Integer, nullable=True)
+    carrier_name    = Column(String, nullable=True, default="")
+    status          = Column(String, nullable=False, default="pending", index=True)
+    status_detail   = Column(Text, nullable=True, default="")
+    location        = Column(String, nullable=True, default="")
+    estimated_from  = Column(String, nullable=True, default="")
+    estimated_to    = Column(String, nullable=True, default="")
+    latest_event_at = Column(String, nullable=True, default="")
+    last_checked_at = Column(String, nullable=True, default="")
+    is_archived     = Column(Boolean, nullable=False, default=False, index=True)
+    raw_tracking    = Column(Text, nullable=True, default="{}")
+    __table_args__ = (
+        Index("uq_tracked_packages_owner_number", "owner", "tracking_number", unique=True),
+        Index("ix_tracked_packages_owner_active", "owner", "is_archived", "updated_at"),
+    )
+
+
 class TaskRun(Base):
     """Record of a single execution of a ScheduledTask."""
     __tablename__ = "task_runs"
@@ -2345,6 +2460,19 @@ def _migrate_add_task_authority_column():
             conn.execute(text("ALTER TABLE scheduled_tasks ADD COLUMN request_authority_json TEXT"))
 
 
+def _migrate_add_job_external_id_column():
+    """Add the employer/ATS job identifier to existing job trackers."""
+    from sqlalchemy import inspect
+    with engine.begin() as conn:
+        columns = {column["name"] for column in inspect(conn).get_columns("job_applications")}
+        if "external_job_id" not in columns:
+            conn.execute(text("ALTER TABLE job_applications ADD COLUMN external_job_id VARCHAR"))
+            conn.execute(text(
+                "CREATE INDEX IF NOT EXISTS ix_job_applications_external_job_id "
+                "ON job_applications (external_job_id)"
+            ))
+
+
 def init_db():
     """
     Initialize the database by creating all tables.
@@ -2423,6 +2551,7 @@ def init_db():
     _migrate_add_email_oauth_columns()
     _migrate_add_task_automation_columns()
     _migrate_add_task_authority_column()
+    _migrate_add_job_external_id_column()
     _migrate_add_disabled_tools()
     _migrate_add_mcp_oauth_tokens_column()
     _migrate_add_task_v2_columns()

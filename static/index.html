@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content, viewport-fit=cover" />
-  <title>Odysseus Chat</title>
+  <title>Odysseus Dashboard</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 4L16 22L6 22Z' fill='%23e06c75'/%3E%3Cpath d='M16 8L16 22L24 22Z' fill='%23e06c75' opacity='0.6'/%3E%3Cpath d='M4 24Q10 20 16 24Q22 28 28 24' stroke='%23e06c75' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
   <link rel="manifest" href="/static/manifest.json">
   <meta name="theme-color" content="#282c34">
@@ -279,6 +279,7 @@
   <link rel="stylesheet" href="/static/css/documents-gallery-editor.css?v=20260929csssplit">
   <link rel="stylesheet" href="/static/css/email-calendar-notes-tasks.css?v=20260929csssplit">
   <link rel="stylesheet" href="/static/css/cookbook-research-memory-settings.css?v=20260929csssplit">
+  <link rel="stylesheet" href="/static/css/dashboard.css?v=20261104dashboard1">
   <link rel="modulepreload" href="/static/app.js?v=20260929csssplit">
 <link rel="modulepreload" href="/static/js/chat.js?v=20260917toolttft1">
   <link rel="modulepreload" href="/static/js/ui.js?v=20260916largetoolscroll1">
@@ -773,6 +774,7 @@
     <button class="icon-rail-btn" id="rail-archive" title="Library"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M9 7h6M9 11h4"/></svg></button>
     <button class="icon-rail-btn" id="rail-memory" title="Memory"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg></button>
     <button class="icon-rail-btn" id="rail-notes" title="Notes"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h10l4 4v14H5z"/><path d="M15 3v5h5"/><path d="M8 17.5 15.5 10l2.5 2.5L10.5 20H8z"/></svg></button>
+    <button class="icon-rail-btn" id="rail-jobs" title="Jobs"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/><path d="M10 12v2h4v-2"/></svg></button>
     <button class="icon-rail-btn" id="rail-skills" title="Skills"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></button>
     <button class="icon-rail-btn" id="rail-tasks" title="Tasks"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg></button>
     <button class="icon-rail-btn" id="rail-theme" title="Theme"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 0 0 20 5 5 0 0 0 5-5 3 3 0 0 0-3-3h-2a3 3 0 0 1-3-3 5 5 0 0 1 5-5"/></svg></button>
@@ -955,6 +957,15 @@
             <span class="list-item-plus-label">new</span>
           </button>
         </div>
+        <a class="list-item" id="tool-jobs-btn" href="/jobs" style="color:inherit;text-decoration:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:0.5;">
+            <rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/><path d="M10 12v2h4v-2"/>
+          </svg>
+          <span class="grow">Jobs</span>
+        </a>
+        <a class="list-item" id="tool-packages-btn" href="/packages" style="color:inherit;text-decoration:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" style="flex-shrink:0;opacity:0.5;"><path d="m3 7 9-4 9 4-9 4-9-4Z"/><path d="m3 7 9 4 9-4v10l-9 4-9-4V7Z"/><path d="M12 11v10"/></svg><span class="grow">Packages</span>
+        </a>
         <div class="list-item" id="tool-skills-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -1013,11 +1024,63 @@
     <div class="chat-top-bar">
       <button type="button" class="incognito-indicator" id="incognito-indicator" title="Nobody mode active — click to deactivate" style="display:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><line x1="8" y1="16" x2="16" y2="8"/><line x1="8" y1="8" x2="16" y2="16"/></svg></button>
       <div class="chat-meta-overlay"><span id="current-meta">Odysseus Chat</span><span id="current-meta-count" class="chat-meta-count" aria-hidden="true"></span><span id="session-cost-display" class="session-cost-display" style="display:none;"></span><button type="button" class="chat-context-pill" id="chat-context-pill" title="Chat context" hidden><span class="chat-context-dot"></span><span id="chat-context-pill-label">0%</span></button><span class="export-dropdown-wrap" id="export-dropdown-wrap"><button type="button" class="export-dl-btn" id="export-dl-btn" title="More"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button><div class="export-dropdown-menu" id="export-dropdown-menu"><div class="export-dropdown-item" id="export-rename-btn"><span class="dropdown-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></span><span>Rename</span></div><div class="export-dropdown-item" id="export-compact-btn"><span class="dropdown-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M7 12h10"/><path d="M10 17h4"/></svg></span><span class="export-compact-pill">Compact</span></div><div class="export-dropdown-item" id="export-copy-btn"><span class="dropdown-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></span><span>Copy Chat</span></div><div class="export-dropdown-item" id="export-pdf-btn"><span class="dropdown-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15v-2h2a1.5 1.5 0 0 1 0 3H9z"/></svg></span><span>PDF</span></div><div class="export-dropdown-item dropdown-item-danger" id="export-delete-btn"><span class="dropdown-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></span><span>Delete Chat</span></div></div></span></div>    </div>
-    <div id="welcome-screen">
-      <div class="welcome-name"><svg class="welcome-boat" viewBox="0 0 32 32"><path d="M16 4L16 22L6 22Z" fill="currentColor"/><path d="M16 8L16 22L24 22Z" fill="currentColor" opacity="0.6"/><path d="M4 24Q10 20 16 24Q22 28 28 24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>Odysseus</div>
-      <div class="welcome-sub" id="welcome-sub">A voyage begins.</div>
-      <div class="welcome-tip" id="welcome-tip" role="note"></div>
-      <button type="button" class="incognito-btn" id="incognito-btn" title="Enable Nobody mode — no memory or skill injection, no history saved">
+    <div id="welcome-screen" class="dashboard-home">
+      <div class="dashboard-shell">
+        <header class="dashboard-hero">
+          <div>
+            <p class="dashboard-eyebrow" id="dashboard-date">Your workspace</p>
+            <h2><span id="dashboard-greeting">Good morning</span><span class="dashboard-dot">.</span></h2>
+            <p class="dashboard-subtitle">Here’s what’s happening with your job search.</p>
+          </div>
+          <div class="dashboard-hero-actions">
+            <button class="dashboard-action primary" type="button" id="dashboard-add-job">＋ Add application</button>
+            <button class="dashboard-action" type="button" data-open-calendar>Open calendar</button>
+          </div>
+        </header>
+
+        <section class="dashboard-stats" aria-label="Application overview">
+          <article><span>Applications</span><strong id="dash-total-jobs">—</strong><small>tracked</small></article>
+          <article><span>In progress</span><strong id="dash-active-jobs">—</strong><small>active</small></article>
+          <article><span>Interviewing</span><strong id="dash-interviews">—</strong><small>next stage</small></article>
+          <article><span>Needs review</span><strong id="dash-review-count">—</strong><small>email updates</small></article>
+        </section>
+
+        <div class="dashboard-grid">
+          <section class="dashboard-card schedule-card">
+            <div class="dashboard-card-head"><div><p class="card-kicker">Schedule</p><h3>This month</h3></div><button type="button" class="card-link" data-open-calendar>View calendar →</button></div>
+            <div class="schedule-layout">
+              <div class="mini-calendar" id="dashboard-calendar" aria-label="Monthly calendar"></div>
+              <div class="upcoming-list" id="dashboard-events"><div class="dashboard-loading">Loading schedule…</div></div>
+            </div>
+          </section>
+
+          <section class="dashboard-card stages-card">
+            <div class="dashboard-card-head"><div><p class="card-kicker">Next stages</p><h3>Upcoming OA & interviews</h3></div></div>
+            <div id="dashboard-stages" class="stage-list"><div class="dashboard-loading">Checking upcoming events…</div></div>
+          </section>
+
+          <section class="dashboard-card applications-card">
+            <div class="dashboard-card-head"><div><p class="card-kicker">Pipeline</p><h3>Recent applications</h3></div><a class="card-link" href="/jobs">View all →</a></div>
+            <div id="dashboard-jobs" class="recent-jobs"><div class="dashboard-loading">Loading applications…</div></div>
+          </section>
+
+          <section class="dashboard-card attention-card">
+            <div class="dashboard-card-head"><div><p class="card-kicker">Inbox intelligence</p><h3>Updates to review</h3></div><button type="button" class="card-link" id="dashboard-scan-email">Scan email</button></div>
+            <div id="dashboard-email-updates" class="attention-list"><div class="dashboard-loading">Loading email updates…</div></div>
+          </section>
+          <section class="dashboard-card packages-card">
+            <div class="dashboard-card-head"><div><p class="card-kicker">Deliveries</p><h3>Active packages</h3></div><a class="card-link" href="/packages">View all →</a></div>
+            <div id="dashboard-packages" class="recent-jobs"><div class="dashboard-loading">Loading packages…</div></div>
+          </section>
+        </div>
+
+        <footer class="dashboard-shortcuts">
+          <a href="/jobs"><span>＋</span> Track a job</a>
+          <button type="button" data-open-calendar><span>▣</span> Add an event</button>
+          <button type="button" id="dashboard-ask"><span>⌁</span> Ask Odysseus</button>
+        </footer>
+      </div>
+      <button type="button" class="incognito-btn dashboard-incognito" id="incognito-btn" title="Enable Nobody mode — no memory or skill injection, no history saved">
         <svg class="eye-open" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
         </svg>
@@ -2688,6 +2751,7 @@
 <script type="module" src="/static/js/codeRunner.js?v=20260831richtexttools91"></script>
 <script type="module" src="/static/js/chatStream.js?v=20260914pdfstrip1"></script>
 <script type="module" src="/static/js/chat.js?v=20260917toolttft1"></script>
+<script type="module" src="/static/js/dashboard.js?v=20261104dashboard1"></script>
 <script type="module" src="/static/js/cookbook.js"></script>
 <script src="/static/js/cookbookSchedule.js"></script>
 <script type="module" src="/static/js/search-chat.js"></script>

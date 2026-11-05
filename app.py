@@ -927,6 +927,12 @@ app.include_router(setup_vault_routes())
 from routes.contacts.contacts_routes import setup_contacts_routes
 app.include_router(setup_contacts_routes())
 
+from routes.job_routes import setup_job_routes
+app.include_router(setup_job_routes())
+
+from routes.package_routes import setup_package_routes
+app.include_router(setup_package_routes())
+
 from companion import setup_companion_routes
 app.include_router(setup_companion_routes())
 
@@ -979,6 +985,14 @@ async def serve_tasks(request: Request):
 @app.get("/library")
 async def serve_library(request: Request):
     return await serve_index(request)
+
+@app.get("/jobs")
+async def serve_jobs(request: Request):
+    return serve_html_with_nonce(request, abs_join(BASE_DIR, "static/jobs.html"))
+
+@app.get("/packages")
+async def serve_packages(request: Request):
+    return serve_html_with_nonce(request, abs_join(BASE_DIR, "static/packages.html"))
 
 @app.get("/backgrounds")
 async def serve_backgrounds(request: Request):

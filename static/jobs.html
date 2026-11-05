@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Jobs — Odysseus</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0d1015;--panel:#151a22;--panel2:#1c232e;--line:#2a3442;--text:#eef2f7;--muted:#94a3b8;--accent:#dc6673;--good:#58b88b}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#18202b 0,transparent 35%),var(--bg);color:var(--text);font:14px/1.5 ui-sans-serif,system-ui,sans-serif;min-height:100vh}
+    button,input,textarea,select{font:inherit}a{color:inherit}.shell{max-width:1180px;margin:auto;padding:28px 22px 64px}.top{display:flex;align-items:center;gap:14px;margin-bottom:24px}.back{color:var(--muted);text-decoration:none}.top h1{font-family:Georgia,serif;letter-spacing:.04em;margin:0}.top p{margin:2px 0 0;color:var(--muted)}
+    .scraper,.editor,.job-card,.ai-panel,.mail-panel,.mail-card{background:rgba(21,26,34,.96);border:1px solid var(--line);border-radius:14px}.scraper{padding:18px;display:flex;gap:10px}.scraper input{flex:1}.field,input,textarea,select{width:100%;background:#0f141b;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px 11px}textarea{min-height:150px;resize:vertical}.btn{border:0;border-radius:8px;padding:10px 16px;background:var(--accent);color:#fff;font-weight:700;cursor:pointer}.btn.secondary{background:var(--panel2);border:1px solid var(--line)}.btn:disabled{opacity:.55;cursor:wait}.message{min-height:24px;margin:8px 2px;color:var(--muted)}.message.error{color:#ff8d98}.message.ok{color:var(--good)}
+    .editor{display:none;padding:20px;margin:18px 0}.editor.open{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.wide{grid-column:1/-1}label{display:block;color:var(--muted);font-size:12px;margin-bottom:5px}.actions{display:flex;gap:9px;justify-content:flex-end;margin-top:16px}.toolbar{display:flex;align-items:center;justify-content:space-between;margin:30px 0 12px}.toolbar h2{margin:0}.filters{display:flex;gap:8px}.filters select{width:auto}.jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}.job-card{padding:17px}.job-card h3{margin:0 0 3px;font-size:17px}.company{color:#f3a0a9;font-weight:650}.meta{color:var(--muted);margin:9px 0;min-height:21px}.badge{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 8px;font-size:11px;text-transform:capitalize}.job-actions{display:flex;gap:10px;margin-top:14px}.job-actions a,.job-actions button{color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-decoration:none}.empty{color:var(--muted);padding:24px 0}.review{font-size:12px;color:#f2c96d;margin-top:10px}
+    .ai-panel{padding:17px;margin-bottom:14px}.ai-panel summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}.ai-panel summary::-webkit-details-marker{display:none}.ai-settings{margin-top:16px}.toggle-row{display:flex;align-items:center;gap:9px;margin-bottom:14px;color:var(--text)}.toggle-row input{width:auto}.key-row{display:grid;grid-template-columns:1fr auto;gap:9px}.hint{font-size:12px;color:var(--muted);margin:6px 0 0}.ai-status{font-size:12px;color:var(--muted);font-weight:400}.ai-actions{display:flex;gap:9px;justify-content:flex-end;margin-top:14px}
+    .mail-panel{padding:18px;margin-top:24px}.mail-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.mail-head h2{margin:0}.mail-list{display:grid;gap:10px;margin-top:14px}.mail-card{padding:15px;background:#10161e}.mail-card h3{font-size:15px;margin:0 0 3px}.mail-subject{color:var(--muted);font-size:12px}.mail-evidence{margin:10px 0;color:#d9e0ea}.mail-actions{display:flex;align-items:center;gap:9px}.mail-actions .badge{margin-right:auto}.privacy{color:var(--muted);font-size:12px;margin:6px 0 0}
+    @media(max-width:700px){.scraper{flex-direction:column}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.toolbar{align-items:flex-start;gap:10px;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><a class="back" href="/">← Odysseus</a><div><h1>Job Applications</h1><p>Paste a posting, review the extracted details, and save it.</p></div></header>
+    <details class="ai-panel" id="ai-panel">
+      <summary><span>Gemini extraction fallback</span><span class="ai-status" id="ai-status">Loading…</span></summary>
+      <div class="ai-settings">
+        <label class="toggle-row"><input type="checkbox" id="ai-enabled">Use Gemini for every job import (required)</label>
+        <div class="grid">
+          <div><label for="ai-model">Gemini model</label><input id="ai-model" value="gemini-2.5-flash-lite" autocomplete="off"></div>
+          <div><label for="ai-key">API key</label><div class="key-row"><input id="ai-key" type="password" placeholder="Paste a new key" autocomplete="new-password"><button class="btn secondary" type="button" id="remove-ai-key">Remove</button></div><p class="hint" id="ai-key-hint">The key is encrypted on this Odysseus installation and is never shown again.</p></div>
+        </div>
+        <p class="hint">Only public job-page text is sent to Google. Your saved jobs, notes, email, and résumé are not included.</p>
+        <div class="ai-actions"><button class="btn secondary" type="button" id="test-ai">Test connection</button><button class="btn" type="button" id="save-ai">Save AI settings</button></div>
+      </div>
+    </details>
+    <section class="scraper" aria-label="Import a job posting">
+      <input id="job-url" type="url" placeholder="https://company.com/jobs/role" autocomplete="url">
+      <button class="btn" id="scrape-btn">Import job</button>
+    </section>
+    <div class="message" id="message" role="status" aria-live="polite"></div>
+    <form class="editor" id="job-form">
+      <input type="hidden" id="job-id">
+      <div class="grid">
+        <div><label for="external-job-id">Job ID / Requisition ID</label><input id="external-job-id"></div>
+        <div><label for="company">Company</label><input id="company" required></div>
+        <div><label for="title">Position</label><input id="title" required></div>
+        <div><label for="location">Location</label><input id="location"></div>
+        <div><label for="employment-type">Employment type</label><input id="employment-type"></div>
+        <div><label for="salary">Salary</label><input id="salary"></div>
+        <div><label for="status">Status</label><select id="status"><option value="saved">Saved</option><option value="applied">Applied</option><option value="interviewing">Interviewing</option><option value="offer">Offer</option><option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option></select></div>
+        <div><label for="posted-at">Posted</label><input id="posted-at"></div>
+        <div><label for="applied-at">Date applied</label><input id="applied-at" type="date"></div>
+        <div class="wide"><label for="apply-url">Application link</label><input id="apply-url" type="url"></div>
+        <div class="wide"><label for="description">Job description</label><textarea id="description"></textarea></div>
+        <div class="wide"><label for="notes">Notes</label><textarea id="notes" style="min-height:80px"></textarea></div>
+      </div>
+      <div class="review">Review these fields before saving—job sites can publish incomplete or outdated metadata.</div>
+      <div class="actions"><button type="button" class="btn secondary" id="cancel-btn">Cancel</button><button class="btn" type="submit">Save application</button></div>
+    </form>
+    <section class="mail-panel" aria-labelledby="mail-title">
+      <div class="mail-head"><div><h2 id="mail-title">Email status check</h2><p class="privacy">Reads the recent inbox without marking messages read. Analysis stays on this Odysseus device; nothing is sent to Gemini.</p></div><button class="btn secondary" type="button" id="scan-email">Scan email</button></div>
+      <div class="mail-list" id="mail-suggestions"></div>
+    </section>
+    <div class="toolbar"><h2>Saved jobs</h2><div class="filters"><select id="status-filter"><option value="">All statuses</option><option value="saved">Saved</option><option value="applied">Applied</option><option value="interviewing">Interviewing</option><option value="offer">Offer</option><option value="rejected">Rejected</option><option value="withdrawn">Withdrawn</option></select></div></div>
+    <section class="jobs" id="jobs"></section>
+  </main>
+  <script type="module" src="/static/js/jobs.js"></script>
+</body>
+</html>
