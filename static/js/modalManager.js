@@ -75,6 +75,10 @@ function _bringToFront(modal) {
 }
 
 function _emitModalOpened(id, modal) {
+  // Tool windows are transient: surfacing one fully closes every other tool
+  // window (including minimized dock chips). This keeps the app focused on a
+  // single task and prevents hidden window state from piling up.
+  closeAllExcept(id);
   try {
     window.dispatchEvent(new CustomEvent('odysseus:modal-opened', {
       detail: { id, modal },
@@ -1233,6 +1237,18 @@ export function unregister(id) {
 
 export function isRegistered(id)  { return _state.has(id); }
 export function isMinimized(id)   { return _state.get(id)?.isMinimized === true; }
+
+/** Close every managed tool window except the one currently being opened. */
+export function closeAllExcept(exceptId = null) {
+  for (const id of [..._state.keys()]) {
+    if (id !== exceptId) close(id);
+  }
+}
+
+/** Close all managed tool windows and clear their minimized dock chips. */
+export function closeAll() {
+  closeAllExcept(null);
+}
 
 export function minimize(id) {
   // Lazy-register if a known modal isn't yet registered (e.g. user clicked `_`

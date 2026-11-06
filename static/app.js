@@ -39,8 +39,8 @@ import calendarModule from './js/calendar.js?v=20260914emailsource11';
 import notesModule from './js/notes.js?v=20260911notesselectioncancel1';
 import adminModule from './js/admin.js?v=20260929csssplit';
 import settingsModule from './js/settings.js?v=20260912writingstyle3';
-// Eagerly bind unified minimize/restore behavior across all tool modals.
-import './js/modalManager.js';
+// Eagerly bind unified transient open/close behavior across all tool modals.
+import * as Modals from './js/modalManager.js';
 import './js/chipScroll.js?v=20260903calendarchips1';
 import './js/mobileBulkSelect.js?v=20260910selecthold1';
 // Desktop window tiling — drag a modal near an edge/corner to snap.
@@ -849,8 +849,13 @@ function initializeEventListeners() {
     const modal = e.target.closest('.modal');
     if (!modal || modal.classList.contains('hidden')) return;
     if (e.target.closest('.modal-content')) return;
-    dismissModal(modal);
+    if (Modals.isRegistered(modal.id)) Modals.close(modal.id);
+    else dismissModal(modal);
   });
+
+  // Tool windows are intentionally one-use surfaces. Leaving the browser/app
+  // closes the active window instead of preserving a stale stack for later.
+  window.addEventListener('blur', () => Modals.closeAll());
 
   // Mobile bottom-sheet swipe-to-dismiss is handled by ui.js (header-only)
 
