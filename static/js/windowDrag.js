@@ -59,6 +59,15 @@ export function makeWindowDraggable(modal, options = {}) {
   const content = options.content;
   const header = options.header;
   if (!content || !header) return;
+
+  // Odysseus uses a single centered transient modal for tools. Keep this
+  // shared helper callable by legacy modules, but do not wire desktop window
+  // movement/resizing for modal tools or the Notes pane.
+  if (modal?.classList?.contains('modal') || modal?.id === 'notes-pane' || content?.id === 'notes-pane') {
+    header.style.cursor = 'default';
+    header.style.userSelect = '';
+    return;
+  }
   const fsClass = options.fsClass || null;
   const onEnterFullscreen = options.onEnterFullscreen || null;
   const onExitFullscreen = options.onExitFullscreen || null;

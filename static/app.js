@@ -867,20 +867,133 @@ function initializeEventListeners() {
       _transientWindowSweep = false;
     }
   };
+
+  const _normalizeTransientModal = (modal) => {
+    if (!modal) return;
+    modal.classList.remove('modal-left-docked', 'modal-right-docked', 'email-snap-left');
+    document.body.classList.remove('left-dock-active', 'right-dock-active', 'email-doc-split-active');
+    ['position', 'left', 'right', 'top', 'bottom', 'width', 'height', 'transform']
+      .forEach((prop) => modal.style.removeProperty(prop));
+    const content = modal.querySelector(':scope > .modal-content')
+      || modal.querySelector(':scope > [class*="modal-content"]')
+      || modal.firstElementChild;
+    if (!content) return;
+    content.classList.remove('window-resizing', 'notes-window-fullscreen');
+    ['position', 'left', 'right', 'top', 'bottom', 'margin', 'transform']
+      .forEach((prop) => content.style.removeProperty(prop));
+  };
+
   const _transientWindowObserver = new MutationObserver((records) => {
     // The last newly-visible modal is the one the user just requested.
-    const opened = records
-      .map((record) => record.target)
+    const candidates = records.flatMap((record) => [
+      record.target,
+      ...[...(record.addedNodes || [])].filter((node) => node?.nodeType === 1),
+    ]);
+    const opened = candidates
+      .flatMap((target) => target?.classList?.contains('modal')
+        ? [target]
+        : [...(target?.querySelectorAll?.('.modal') || [])])
       .filter((target) => target?.classList?.contains('modal'))
       .filter(_modalIsVisible)
       .at(-1);
-    if (opened) _closeOtherTransientWindows(opened);
+    if (opened) {
+      _normalizeTransientModal(opened);
+      _closeOtherTransientWindows(opened);
+    }
   });
   _transientWindowObserver.observe(document.body, {
     subtree: true,
+    childList: true,
     attributes: true,
     attributeFilter: ['class', 'style'],
   });
+
+  window.addEventListener('odysseus:modal-opened', (event) => {
+    if (searchChatModule?.isOpen?.()) searchChatModule.closeSearch();
+    const modal = event.detail?.modal?.classList?.contains('modal')
+      ? event.detail.modal
+      : document.getElementById(event.detail?.id || '');
+    _normalizeTransientModal(modal);
+  });
+
+  // Any sidebar or icon-rail action dismisses the current surface first.
+  // Its own click handler then opens the requested tool, so there can never
+  // be more than one tool window on screen.
+  document.addEventListener('click', (event) => {
+    const navAction = event.target.closest(
+      '#sidebar .list-item, #sidebar .section-header-flex, #icon-rail button, #icon-rail [role="button"]'
+    );
+    if (!navAction) return;
+    if (searchChatModule?.isOpen?.()) searchChatModule.closeSearch();
+    _closeOtherTransientWindows(null);
+    Modals.closeAll();
+  }, true);
+
+  const _searchOverlay = document.getElementById('search-overlay');
+  if (_searchOverlay) {
+    new MutationObserver(() => {
+      if (_searchOverlay.classList.contains('hidden')) return;
+      _closeOtherTransientWindows(null);
+      Modals.closeAll();
+    }).observe(_searchOverlay, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  function _openStandaloneToolModal(path, title) {
+    const id = `standalone-${path.replace(/[^a-z0-9]+/gi, '-')}-modal`;
+    const existing = document.getElementById(id);
+    if (existing) {
+      existing.classList.remove('hidden');
+      _normalizeTransientModal(existing);
+      _closeOtherTransientWindows(existing);
+      return;
+    }
+
+    _closeOtherTransientWindows(null);
+    Modals.closeAll();
+
+    const modal = document.createElement('div');
+    modal.id = id;
+    modal.className = 'modal';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', title);
+    modal.innerHTML = `
+      <section class="modal-content standalone-tool-modal-content">
+        <header class="modal-header">
+          <h4>${title}</h4>
+          <button type="button" class="close-btn modal-close" aria-label="Close ${title}">×</button>
+        </header>
+        <iframe class="standalone-tool-frame" title="${title}" src="${path}?embed=1"></iframe>
+      </section>`;
+
+    const close = () => {
+      modal.remove();
+      Modals.unregister(id);
+    };
+    modal.querySelector('.modal-close')?.addEventListener('click', close);
+    document.body.appendChild(modal);
+    Modals.register(id, { closeFn: close });
+    modal.querySelector('iframe')?.addEventListener('load', (event) => {
+      try { event.currentTarget.contentDocument?.querySelector('.back')?.remove(); } catch (_) {}
+    });
+    modal.querySelector('.modal-close')?.focus();
+  }
+
+  // Jobs and Packages are full pages when opened directly, but inside the
+  // dashboard they behave like every other sidebar tool.
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link) return;
+    const url = new URL(link.href, window.location.href);
+    if (url.origin !== window.location.origin) return;
+    const title = url.pathname === '/jobs' ? 'Job Applications'
+      : url.pathname === '/packages' ? 'Package Tracker'
+        : null;
+    if (!title) return;
+    event.preventDefault();
+    event.stopPropagation();
+    _openStandaloneToolModal(url.pathname, title);
+  }, true);
 
   // Click outside modal content → close modal
   document.addEventListener('click', (e) => {

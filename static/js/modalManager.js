@@ -1251,39 +1251,11 @@ export function closeAll() {
 }
 
 export function minimize(id) {
-  // Lazy-register if a known modal isn't yet registered (e.g. user clicked `_`
-  // on a tool that doesn't pre-register itself).
+  // Tool surfaces are single-use modals now. A legacy minimize gesture is
+  // treated as a close so no invisible window state or dock chip survives.
   if (!_state.has(id) && _AUTO_WIRE[id]) _autoRegister(id);
-  const s = _state.get(id);
-  if (!s) return false;
-  // The id may refer to a virtual tool (e.g. the document panel) that has no
-  // actual modal element — in that case we just track the minimized state
-  // and let the chip drive restore/close via the registered functions.
-  const modal = document.getElementById(id);
-  if (modal) {
-    _captureRestoreHeight(modal, s);
-    // If this window is edge-docked (right/left), SUSPEND the dock: release
-    // the body push so the chat returns to full width while the window is
-    // minimized, but keep the dock so restoring the chip snaps it back in.
-    if (modal.classList.contains('modal-right-docked')
-        || modal.classList.contains('modal-left-docked')
-        || modal.classList.contains('email-snap-left')) {
-      try { suspendDock(modal); } catch (e) { console.warn('suspendDock on minimize failed', e); }
-    }
-    modal.classList.add('hidden');
-    modal.classList.add('modal-minimized');
-    const content = modal.querySelector('.modal-content');
-    if (content) {
-      content.classList.remove('sheet-ready', 'modal-closing');
-      content.style.transform = '';
-      content.style.transition = '';
-      content.style.animation = '';
-    }
-  }
-  s.isMinimized = true;
-  _setBadge(s.btnIds, true);
-  _ensureDock();
-  _renderDock();
+  if (!_state.has(id)) return false;
+  close(id);
   return true;
 }
 
@@ -1382,46 +1354,8 @@ export function close(id) {
 export function injectMinimizeButton(modal, modalId) {
   const header = modal.querySelector('.modal-header');
   if (!header) return;
-  if (header.querySelector('.modal-minimize-btn, .minimize-btn, [data-minimize]')) {
-    // An existing minimize button is present — wire it to the manager instead
-    const existing = header.querySelector('.minimize-btn, [data-minimize]');
-    if (existing && !existing.dataset._modalsBound) {
-      existing.dataset._modalsBound = '1';
-      existing.addEventListener('click', (e) => {
-        e.stopPropagation();
-        minimize(modalId);
-      }, true);
-    }
-    return;
-  }
-  const closeBtn = header.querySelector('.close-btn, .modal-close');
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.className = 'modal-minimize-btn';
-  btn.title = 'Minimize';
-  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="18" x2="19" y2="18"/></svg>';
-  // Anchor the _/X pair to the right edge regardless of the header's
-  // justify-content. Some headers (cookbook) use `space-between`, which
-  // would otherwise distribute three children as left/center/right and
-  // strand the `_` in the middle. `margin-left:auto` eats the free space
-  // to the left so `_` + close sit snug at the right.
-  btn.style.flexShrink = '0';
-  btn.style.marginLeft = 'auto';
-  if (closeBtn) {
-    // The close button may carry its own left margin (e.g. compare's inline
-    // "margin-left:8px") meant to separate it from the title when it stood
-    // alone. Now that `_` sits to its left, that margin becomes a stray gap
-    // between the two buttons — zero it. The minimize button's own
-    // margin-right (2px, from .modal-minimize-btn) provides the gap.
-    closeBtn.style.marginLeft = '0';
-    closeBtn.style.flexShrink = '0';
-  }
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    minimize(modalId);
-  });
-  if (closeBtn && closeBtn.parentNode) closeBtn.parentNode.insertBefore(btn, closeBtn);
-  else header.appendChild(btn);
+  header.querySelectorAll('.modal-minimize-btn, .minimize-btn, [data-minimize]')
+    .forEach((button) => button.remove());
 }
 
 // ── Auto-wire fallback for modals not explicitly registered ──

@@ -1,0 +1,134 @@
+/* Single-window tool mode.
+   All tools share one centered modal surface; the dashboard remains visible
+   behind a clickable backdrop. Desktop-style drag, resize, dock and minimize
+   affordances are intentionally disabled. */
+
+.modal:not(.hidden),
+.notes-pane-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: clamp(12px, 3vw, 36px) !important;
+  background: rgba(0, 0, 0, 0.68) !important;
+  backdrop-filter: blur(2px) !important;
+  pointer-events: auto !important;
+  z-index: 1000 !important;
+  transition: none !important;
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+.modal:not(.hidden) > *,
+.notes-pane-backdrop > .notes-pane {
+  position: relative !important;
+  inset: auto !important;
+  margin: 0 !important;
+  transform: none !important;
+  max-width: min(1180px, calc(100vw - 48px)) !important;
+  max-height: calc(100dvh - 48px) !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.62) !important;
+  pointer-events: auto !important;
+}
+
+.modal-header,
+.modal-header:active,
+.notes-pane-header,
+.notes-pane-header:active {
+  cursor: default !important;
+  user-select: auto !important;
+}
+
+/* Old window-state classes may remain in local storage after an upgrade.
+   Neutralize them so they cannot move the new modal away from the center. */
+.modal-left-docked,
+.modal-right-docked,
+.email-snap-left,
+.notes-window-fullscreen {
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+}
+
+.modal-minimize-btn,
+.minimize-btn,
+[data-minimize],
+#minimized-dock,
+.modal-snap-hint,
+.edge-dock-resize-handle-left,
+.edge-dock-resize-handle-right {
+  display: none !important;
+}
+
+.notes-pane-backdrop > .notes-pane {
+  width: min(1000px, calc(100vw - 48px)) !important;
+  height: min(820px, calc(100dvh - 48px)) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.standalone-tool-modal-content {
+  width: min(1180px, calc(100vw - 48px)) !important;
+  height: min(900px, calc(100dvh - 48px)) !important;
+  max-height: calc(100dvh - 48px) !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.standalone-tool-modal-content .modal-header {
+  flex: 0 0 auto;
+  margin: 0 !important;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.standalone-tool-frame {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  border: 0;
+  background: var(--bg);
+}
+
+/* Search is the one legacy overlay that is not named `.modal`; it follows
+   the same centered placement and backdrop rules. */
+.search-overlay:not(.hidden) {
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: clamp(12px, 3vw, 36px) !important;
+  background: rgba(0, 0, 0, 0.68) !important;
+  backdrop-filter: blur(2px) !important;
+  z-index: 1000 !important;
+}
+
+@media (max-width: 768px) {
+  .modal:not(.hidden),
+  .notes-pane-backdrop {
+    padding: 8px !important;
+    align-items: center !important;
+  }
+
+  .modal:not(.hidden) > *,
+  .notes-pane-backdrop > .notes-pane,
+  .standalone-tool-modal-content {
+    inset: auto !important;
+    width: calc(100vw - 16px) !important;
+    max-width: calc(100vw - 16px) !important;
+    height: calc(100dvh - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+    margin: 0 !important;
+    border-radius: 12px !important;
+    transform: none !important;
+  }
+}

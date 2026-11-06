@@ -160,7 +160,7 @@ export function createPanel({
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
         <span class="notes-header-btn-label">Toggle</span>
       </button>
-      <button id="notes-minimize-btn" class="modal-minimize-btn" title="Minimize" aria-label="Minimize notes" style="position:relative;left:2px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="18" x2="18" y2="18"/></svg></button>
+      <button id="notes-close-btn" class="close-btn" title="Close" aria-label="Close notes" style="position:relative;left:2px;">×</button>
     </div>
     <div class="notes-search-bar">
       <input type="text" id="notes-search" class="memory-search-input" placeholder="Search notes…" autocomplete="off" />
@@ -205,7 +205,7 @@ export function createPanel({
     backdrop.className = 'notes-pane-backdrop';
     backdrop.id = 'notes-pane-backdrop';
     backdrop.addEventListener('click', (ev) => {
-      if (ev.target === backdrop) closePanel('down');
+      if (ev.target === backdrop) _forceCloseNotesPanel();
     });
     backdrop.appendChild(pane);
     document.body.appendChild(backdrop);
@@ -225,11 +225,11 @@ export function createPanel({
     pane.addEventListener('pointerdown', () => _bringNotesToFront(pane), true);
     pane.addEventListener('focusin', () => _bringNotesToFront(pane), true);
 
-    const minBtn = document.getElementById('notes-minimize-btn');
-    if (minBtn) minBtn.addEventListener('click', (e) => {
+    const closeBtn = document.getElementById('notes-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      closePanel('down');
+      _forceCloseNotesPanel();
     });
     wireToolbar(pane);
     // Select mode

@@ -49,24 +49,7 @@ export function createWindowLayout({
     const header = pane.querySelector('.notes-pane-header');
     if (!header) return;
     pane.dataset.windowDragWired = '1';
-    makeWindowDraggable(pane, {
-      content: pane,
-      header,
-      fsClass: 'notes-window-fullscreen',
-      skipSelector: 'button, input, select, textarea, label, .notes-mobile-grabber',
-      enableDock: true,
-      enableLeftDock: true,
-      onEnterFullscreen: () => {
-        pane.classList.add('notes-window-fullscreen');
-        snapModalToZone(pane, {
-          name: 'fullscreen',
-          rect: _notesFullscreenSafeRect(),
-        });
-      },
-      onExitFullscreen: () => {
-        _restoreNotesSidebarDock(pane);
-      },
-    });
+    header.style.cursor = 'default';
   }
 
   function _clearNotesSnapStyles(pane) {
@@ -87,10 +70,8 @@ export function createWindowLayout({
   }
 
   function _restoreNotesSidebarDock(pane) {
-    if (!pane || window.innerWidth <= 768) return;
+    if (!pane) return;
     _clearNotesSnapStyles(pane);
-    if (!pane.isConnected) return;
-    applyEdgeDock(pane, 'right');
   }
 
   function _topToolWindowZ(exclude = null) {
