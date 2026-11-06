@@ -252,15 +252,15 @@
        ```mermaid fence. They used to load here from cdn.jsdelivr.net on every
        page load, which cost ~985 KB on the wire, broke offline installs, and
        announced every session to a third party. -->
-  <!-- Preload the two faces first paint actually uses: Fira Code 400 and 600,
+  <!-- Preload the two JetBrains Mono faces first paint actually uses: 400 and 600,
        the app font and the weight the sidebar and header text render at. They
        are declared in style.css, so without a hint they are only discovered
        after the stylesheet parses and then queue behind the module graph.
        crossorigin is required even though these are same-origin: fonts are
        always fetched in CORS mode, and a preload whose mode does not match the
        real request is discarded and the font fetched a second time. -->
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="/static/fonts/FiraCode-Regular.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="/static/fonts/FiraCode-SemiBold.woff2">
+  <link rel="preload" as="font" type="font/ttf" crossorigin href="/static/fonts/JetBrainsMono-Regular.ttf">
+  <link rel="preload" as="font" type="font/ttf" crossorigin href="/static/fonts/JetBrainsMono-SemiBold.ttf">
   <link rel="stylesheet" href="/static/css/00-tokens.css?v=20260929csssplit">
   <link rel="stylesheet" href="/static/css/01-agent-chat.css?v=20260929csssplit">
   <link rel="stylesheet" href="/static/css/02-compare.css?v=20260929csssplit">
@@ -288,7 +288,8 @@
   <link rel="stylesheet" href="/static/css/cookbook-research-memory-settings.css?v=20260929csssplit">
   <link rel="stylesheet" href="/static/css/dashboard.css?v=20261105dashboardchat4">
   <link rel="stylesheet" href="/static/css/theme-monochrome.css?v=20261105monochrome5">
-  <link rel="stylesheet" href="/static/css/18-single-modal.css?v=20261106singlemodal1">
+  <link rel="stylesheet" href="/static/css/18-single-modal.css?v=20261106largemodal1">
+  <link rel="stylesheet" href="/static/css/19-typography.css?v=20261106jetbrains1">
   <link rel="modulepreload" href="/static/app.js?v=20261106singlemodal2">
 <link rel="modulepreload" href="/static/js/chat.js?v=20260917toolttft1">
   <link rel="modulepreload" href="/static/js/ui.js?v=20260916largetoolscroll1">
@@ -2789,6 +2790,6 @@
 <script type="module" src="/static/app.js?v=20261106singlemodal2"></script>  <!-- app.js must be LAST -->
   <script type="module" src="/static/js/init.js?v=20260829chatstyle12"></script>
 <script type="module" src="/static/js/a11y.js"></script>
-<script nonce="{{CSP_NONCE}}">if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/sw.js?v=20261106singlemodal2').catch(()=>{});}</script>
+<script nonce="{{CSP_NONCE}}">if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/sw.js?v=20261106jetbrains1').catch(()=>{});}</script>
 </body>
 </html>
