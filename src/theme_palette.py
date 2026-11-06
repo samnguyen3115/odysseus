@@ -3,7 +3,8 @@ import re
 
 THEME_PRESETS = ('dark', 'light', 'midnight', 'cyberpunk', 'retrowave', 'forest',
                  'ocean', 'ume', 'terminal', 'organs', 'gpt', 'claude', 'cute',
-                 'eclipse', 'porcelain', 'arcade', 'blueprint', 'monolith', 'yoyo')
+                 'eclipse', 'porcelain', 'arcade', 'blueprint', 'monolith', 'yoyo',
+                 'monochrome')
 
 BACKGROUND_PATTERNS = ('none', 'dots', 'synapse', 'rain', 'constellations',
                        'perlin-flow', 'petals', 'sparkles', 'embers',

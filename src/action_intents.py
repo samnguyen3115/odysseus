@@ -104,6 +104,13 @@ _ROUTING_PATTERNS: tuple[tuple[str, str, Pattern[str]], ...] = tuple(
         ("calendar", "calendar agenda question", r"\bwhat(?:'s| is)\s+on\s+(?:my\s+)?calendar\b"),
         ("calendar", "next calendar item question", r"\bwhen\s+(?:is|are)\s+(?:my\s+)?next\s+(?:event|meeting|appointment|class)\b"),
 
+        # Saved Jobs and Parcels are private application data. Plain chat
+        # cannot answer these questions without the owner-scoped tracker tool.
+        ("trackers", "saved job or parcel request", r"\b(?:my|saved|tracked)\b.{0,80}\b(?:job\s+applications?|applications?|jobs?|packages?|parcels?|deliveries|shipments?)\b"),
+        ("trackers", "tracker request", r"\b(?:job|package|parcel)\s+tracker\b"),
+        ("trackers", "job application or parcel action", r"\b(?:list|show|find|check|update|edit|archive|add|create|track|refresh)\b.{0,70}\b(?:job\s+applications?|applications?|packages?|parcels?|shipments?)\b"),
+        ("trackers", "selected tracker record update", r"\b(?:change|update|edit|mark|archive|relabel)\b.{0,70}\b(?:that|this|the|my)\s+(?:job|application|package|parcel)\b"),
+
         # Notes, todos, checklists, and reminders.
         ("notes", "reminder request", r"\bremind\s+me\b"),
         ("notes", "assistant note/todo action request", rf"{_ACTION_QUESTION}(?:add|create|make|take|jot|write\s+down|set)\b.{{0,120}}\b(?:note|todo|task|checklist|reminder)\b"),

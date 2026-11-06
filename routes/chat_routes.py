@@ -2674,7 +2674,11 @@ def setup_chat_routes(
                 _tool_intent.category,
                 _tool_intent.reason,
             )
-        elif chat_mode == "chat" and _search_enabled:
+        elif chat_mode == "chat" and _search_enabled and str(use_web).lower() != "true":
+            # Chat's use_web toggle already fetches results into the context
+            # preface. Keep that path in Chat mode so small local models do not
+            # receive the much larger Agent prompt and duplicate search tools.
+            # Agent-only web permission still promotes the turn as before.
             chat_mode = "agent"
             auto_escalated = True
             logger.info("chat→agent auto-escalation: search enabled")

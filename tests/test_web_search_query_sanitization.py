@@ -164,6 +164,24 @@ def test_generated_query_is_used_and_sanitized(monkeypatch):
     assert any("web context" in (msg.get("content") or "") for msg in preface)
 
 
+def test_model_thinking_is_not_used_as_web_query(monkeypatch):
+    captured = {}
+    _patch_flow(
+        monkeypatch,
+        'Thinking Process: 1. Analyze the Request: The user is asking "who won the 2026 midterms".',
+        captured,
+    )
+    processor = ChatProcessor(memory_manager=_Memory(), personal_docs_manager=_Docs())
+    processor.build_context_preface(
+        message="who won the 2026 midterms?",
+        session=_Session(),
+        use_web=True,
+        use_memory=False,
+        use_rag=False,
+    )
+    assert captured["query"] == "who won the 2026 midterms?"
+
+
 def test_falls_back_to_sanitized_first_line_when_llm_raises(monkeypatch):
     """Requirement: when the LLM call raises, #4557's fallback (first non-empty
     line) is used — and that fallback is sanitized before the search call."""

@@ -45,7 +45,7 @@ import './js/chipScroll.js?v=20260903calendarchips1';
 import './js/mobileBulkSelect.js?v=20260910selecthold1';
 // Desktop window tiling — drag a modal near an edge/corner to snap.
 import './js/tileManager.js?v=20260910responsivebounds1';
-import themeModule from './js/theme.js?v=20260911organsrain1';
+import themeModule from './js/theme.js?v=20261105monochrome2';
 // IMPORTANT: import cookbook.js with NO ?v= query — the same plain specifier
 // every other importer (cookbook-hwfit.js / cookbook-diagnosis.js) uses. A query
 // mismatch makes the browser load cookbook.js twice as separate modules (two
@@ -4683,6 +4683,8 @@ function startOdysseusApp() {
       window.hljs.highlightElement(block);
     });
   }
+  window.__odysseusAppReady = true;
+  window.dispatchEvent(new Event('odysseus:app-ready'));
 }
 
 if (document.readyState === 'loading') {

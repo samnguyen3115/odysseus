@@ -7,7 +7,7 @@
 //   - Other static assets (images/fonts/libs): cache-first with bg refresh.
 //   - API / non-GET: never cached.
 // Bump CACHE_NAME whenever the precache list or SW logic changes.
-const CACHE_NAME = 'odysseus-v659-notes-reference';
+const CACHE_NAME = 'odysseus-v665-dashboard-card';
 
 // KaTeX resolves these from its own stylesheet, so caching the CSS without them
 // gives offline math fallback glyphs instead of proper typesetting.
@@ -60,7 +60,10 @@ const PRECACHE = [
   '/static/css/documents-gallery-editor.css?v=20260929csssplit',
   '/static/css/email-calendar-notes-tasks.css?v=20260929csssplit',
   '/static/css/cookbook-research-memory-settings.css?v=20260929csssplit',
-  '/static/app.js?v=20260929csssplit',
+  '/static/css/dashboard.css?v=20261105dashboardchat4',
+  '/static/css/theme-monochrome.css?v=20261105monochrome5',
+  '/static/app.js?v=20261105dashboardchat4',
+  '/static/js/dashboard.js?v=20261105dashboardchat4',
   '/static/js/storage.js',
   '/static/js/appConfig.js',
   '/static/js/ui.js?v=20260916largetoolscroll1',
@@ -92,7 +95,7 @@ const PRECACHE = [
   '/static/js/compare/vote.js?v=20260828resendcaldrag1',
   '/static/js/colorPicker.js?v=20260910eyedropper1',
   '/static/js/panels.js?v=20260909movepicklayer1',
-  '/static/js/theme.js?v=20260911organsrain1',
+  '/static/js/theme.js?v=20261105monochrome5',
   '/static/js/censor.js',
   '/static/js/settings.js?v=20260912writingstyle3',
   '/static/js/admin.js?v=20260929csssplit',

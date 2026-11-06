@@ -1,0 +1,55 @@
+/* Monochrome: square geometry and high contrast selected controls. */
+:root.theme-monochrome {
+  color-scheme: dark;
+  --color-accent: #ffffff;
+  --color-brand-blue: #ffffff;
+  --color-link-hover: #ffffff;
+  --panel2: #101010;
+  --line: #ffffff;
+  --text: #ffffff;
+  --muted: #bcbcbc;
+  --good: #bcbcbc;
+}
+
+:root.theme-monochrome,
+:root.theme-monochrome *,
+:root.theme-monochrome *::before,
+:root.theme-monochrome *::after {
+  border-radius: 0 !important;
+}
+
+/* White fills need black labels, including the dashboard's primary action. */
+:root.theme-monochrome .mini-calendar .day.today,
+:root.theme-monochrome .dashboard-action.primary,
+:root.theme-monochrome .admin-btn-sm:hover,
+:root.theme-monochrome .cookbook-btn:hover,
+:root.theme-monochrome .cookbook-saved-save:hover,
+:root.theme-monochrome .memory-used-pill:hover,
+:root.theme-monochrome .confirm-btn-secondary:hover {
+  color: #000000 !important;
+}
+
+/* Keep the dashboard widget's controls monochrome. */
+:root.theme-monochrome .dashboard-chat-greeting,
+:root.theme-monochrome .dashboard-chat-form button,
+:root.theme-monochrome .dashboard-chat-form button:hover {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+/* Jobs and package tracker are standalone pages with their own color tokens. */
+:root.theme-monochrome body { background: #000000; }
+:root.theme-monochrome .scraper,
+:root.theme-monochrome .editor,
+:root.theme-monochrome .job-card,
+:root.theme-monochrome .ai-panel,
+:root.theme-monochrome .mail-panel,
+:root.theme-monochrome .mail-card,
+:root.theme-monochrome .panel,
+:root.theme-monochrome .package { background: #0a0a0a; }
+:root.theme-monochrome .field,
+:root.theme-monochrome input,
+:root.theme-monochrome textarea,
+:root.theme-monochrome select { background: #000000; color: #ffffff; }
+:root.theme-monochrome .btn { background: #575757; color: #ffffff; border: 1px solid #ffffff; }
+:root.theme-monochrome .btn.secondary { background: #0a0a0a; }

@@ -101,6 +101,48 @@ async function loadDashboard() {
 }
 
 function initDashboard() {
+  if (location.pathname === '/chat') {
+    const sendDraft = () => {
+      const draft = sessionStorage.getItem('odysseus-dashboard-chat-draft');
+      if (!draft) return;
+      const input = $d('message');
+      const send = document.querySelector('.send-btn');
+      if (!input || !send) return;
+      sessionStorage.removeItem('odysseus-dashboard-chat-draft');
+      input.value = draft;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      const modelLabel = $d('model-picker-label')?.textContent?.trim();
+      if (modelLabel && modelLabel !== 'Select model') send.click();
+      else input.focus();
+    };
+    if (window.__odysseusAppReady) sendDraft();
+    else window.addEventListener('odysseus:app-ready', sendDraft, { once: true });
+    return;
+  }
+  if (location.pathname !== '/') return;
+
+  const widgetInput = $d('dashboard-chat-message');
+  $d('dashboard-chat-form')?.addEventListener('submit', event => {
+    event.preventDefault();
+    const message = widgetInput?.value.trim();
+    if (!message) return;
+    sessionStorage.setItem('odysseus-dashboard-chat-draft', message);
+    location.assign('/chat');
+  });
+  document.addEventListener('click', event => {
+    if (!event.target.closest('#sidebar-new-chat-btn, #rail-new-session, #mobile-new-chat-btn, #sidebar-brand-btn')) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    location.assign('/chat');
+  }, true);
+  window.addEventListener('odysseus:session-changed', () => {
+    if (location.pathname !== '/') return;
+    history.replaceState(null, '', '/chat' + location.hash);
+    document.documentElement.classList.remove('dashboard-route');
+    document.documentElement.classList.add('chat-route');
+    document.title = 'Chat — Odysseus';
+  });
+
   const now = new Date();
   const hour = now.getHours();
   $d('dashboard-greeting').textContent = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
@@ -109,7 +151,10 @@ function initDashboard() {
   const input = $d('message'); if (input) input.placeholder = 'Ask Odysseus anything…';
   bindCalendarButtons();
   $d('dashboard-add-job')?.addEventListener('click', () => { location.href='/jobs'; });
-  $d('dashboard-ask')?.addEventListener('click', () => input?.focus());
+  $d('dashboard-ask')?.addEventListener('click', () => {
+    $d('dashboard-chat-widget')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    widgetInput?.focus({ preventScroll: true });
+  });
   $d('dashboard-scan-email')?.addEventListener('click', async event => {
     const button = event.currentTarget; button.disabled = true; button.textContent = 'Scanning…';
     try {

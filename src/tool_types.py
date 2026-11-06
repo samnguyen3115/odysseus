@@ -23,7 +23,7 @@ TOOL_TAGS = {
     "suggest_document",
     "manage_endpoints", "manage_mcp", "manage_webhooks",
     "manage_tokens", "manage_documents", "manage_settings",
-    "manage_notes", "manage_calendar", "resolve_contact", "manage_contact",
+    "manage_notes", "manage_calendar", "manage_trackers", "resolve_contact", "manage_contact",
     "download_model", "serve_model", "list_served_models", "stop_served_model",
     "tail_serve_output", "list_downloads", "cancel_download", "search_hf_models",
     "list_cached_models", "list_serve_presets", "serve_preset", "adopt_served_model",

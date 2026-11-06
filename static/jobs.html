@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Jobs — Odysseus</title>
+  <script nonce="{{CSP_NONCE}}">try { document.documentElement.classList.toggle('theme-monochrome', JSON.parse(localStorage.getItem('odysseus-theme') || 'null')?.name === 'monochrome'); } catch (_) {}</script>
   <style>
     :root{color-scheme:dark;--bg:#0d1015;--panel:#151a22;--panel2:#1c232e;--line:#2a3442;--text:#eef2f7;--muted:#94a3b8;--accent:#dc6673;--good:#58b88b}
     *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0,#18202b 0,transparent 35%),var(--bg);color:var(--text);font:14px/1.5 ui-sans-serif,system-ui,sans-serif;min-height:100vh}
@@ -14,6 +15,7 @@
     .mail-panel{padding:18px;margin-top:24px}.mail-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.mail-head h2{margin:0}.mail-list{display:grid;gap:10px;margin-top:14px}.mail-card{padding:15px;background:#10161e}.mail-card h3{font-size:15px;margin:0 0 3px}.mail-subject{color:var(--muted);font-size:12px}.mail-evidence{margin:10px 0;color:#d9e0ea}.mail-actions{display:flex;align-items:center;gap:9px}.mail-actions .badge{margin-right:auto}.privacy{color:var(--muted);font-size:12px;margin:6px 0 0}
     @media(max-width:700px){.scraper{flex-direction:column}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.toolbar{align-items:flex-start;gap:10px;flex-direction:column}}
   </style>
+  <link rel="stylesheet" href="/static/css/theme-monochrome.css?v=20261105monochrome5">
 </head>
 <body>
   <main class="shell">

@@ -904,7 +904,7 @@ FUNCTION_TOOL_SCHEMAS = [
         "type": "function",
         "function": {
             "name": "ui_control",
-            "description": "Control the user interface. Actions: toggle (turn tools on/off), open_panel (open a modal: documents/library, gallery, calendar/schedule, email, sessions, notes, memories/brain, skills, settings, theme, cookbook; calendar supports month/week/year/agenda plus a date; Cookbook supports models/download, launch/serve, active/running, dependencies, and settings views), open_email_reply (legacy UI-only reply opener; prefer email MCP draft_email_reply for assistant-written reply drafts so a normal document-backed email draft is created), set_mode, switch_model, set_theme (built-in presets: dark, light, midnight, cyberpunk, retrowave, forest, ocean, ume, terminal, organs, gpt, claude, cute, eclipse, porcelain, arcade, blueprint, monolith, yoyo), create_theme (CREATE any custom theme with a name + colors object — pick distinctive, evocative hex colors that match the requested aesthetic, NOT generic defaults. The theme auto-applies after creation), get_theme, and get_toggles. When a user asks for ANY theme not in the built-in preset list, ALWAYS use create_theme.",
+            "description": "Control the user interface. Actions: toggle (turn tools on/off), open_panel (open a modal: documents/library, gallery, calendar/schedule, email, sessions, notes, memories/brain, skills, settings, theme, cookbook; calendar supports month/week/year/agenda plus a date; Cookbook supports models/download, launch/serve, active/running, dependencies, and settings views), open_email_reply (legacy UI-only reply opener; prefer email MCP draft_email_reply for assistant-written reply drafts so a normal document-backed email draft is created), set_mode, switch_model, set_theme (built-in presets: dark, light, midnight, cyberpunk, retrowave, forest, ocean, ume, terminal, organs, gpt, claude, cute, eclipse, porcelain, arcade, blueprint, monolith, yoyo, monochrome), create_theme (CREATE any custom theme with a name + colors object — pick distinctive, evocative hex colors that match the requested aesthetic, NOT generic defaults. The theme auto-applies after creation), get_theme, and get_toggles. When a user asks for ANY theme not in the built-in preset list, ALWAYS use create_theme.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -1471,6 +1471,27 @@ FUNCTION_TOOL_SCHEMAS = [
                     "platform": {"type": "string", "enum": ["linux", "windows"], "description": "Remote platform"}
                 },
                 "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "manage_trackers",
+            "description": "Read and update the current user's saved job applications and tracked parcels. Use dataset=all to list both, jobs for applications, packages for parcels/deliveries. List/search first to get an id before updating. Updates are owner-scoped. Package carrier status is refreshed from the tracking provider; it cannot be manually changed. Use existing notes, calendar, email, memory, and document tools for those other personal records.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "dataset": {"type": "string", "enum": ["all", "jobs", "packages"]},
+                    "action": {"type": "string", "enum": ["list", "get", "create", "update", "archive", "refresh"]},
+                    "id": {"type": "string", "description": "Record id from list; required for get, update, and archive"},
+                    "query": {"type": "string", "description": "Optional company, title, note, parcel label, carrier, or tracking number search"},
+                    "status": {"type": "string", "description": "Optional exact status filter for list"},
+                    "include_archived": {"type": "boolean", "description": "Include archived parcels in list"},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 50},
+                    "fields": {"type": "object", "description": "Fields to create or update. Job create needs job_url; package create needs tracking_number and a configured Ship24 key. Package update permits label and is_archived."}
+                },
+                "required": ["dataset", "action"]
             }
         }
     },

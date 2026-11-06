@@ -51,6 +51,16 @@ def _clean_search_query(query: str, max_len: int = 200) -> str:
     return text[:max_len]
 
 
+def _is_reasoning_instead_of_search_query(query: str) -> bool:
+    """Reject local models' analysis text when asked for a search query."""
+    normalized = query.strip().lower()
+    return bool(re.search(
+        r"(?:<think\b|thinking process\s*:|(?:^|\s)(?:analyze the request|"
+        r"identify the core subject|the user is asking)\s*:?)",
+        normalized,
+    ))
+
+
 # ── Stopwords & tokenizer ──
 
 _STOPWORDS = frozenset(
@@ -438,12 +448,12 @@ class ChatProcessor:
                         timeout=15,
                     ).strip()
 
-                    if generated_query:
+                    if generated_query and not _is_reasoning_instead_of_search_query(generated_query):
                         # LLM successfully generated a non-empty query -> use the generated query
                         search_query = generated_query
                     else:
-                        # LLM returned an empty or whitespace-only query -> fall back to original query
-                        logger.warning("LLM generated an empty search query, using fallback.")
+                        # Empty output or model analysis is not a usable web query.
+                        logger.warning("LLM generated an unusable search query, using fallback.")
                 except Exception as e:
                     # LLM failed (exception/error) -> fall back to original user query
                     logger.warning(f"Failed to generate search query via LLM, using fallback: {e}")

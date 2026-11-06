@@ -20,6 +20,6 @@ def test_agent_theme_inventory_includes_yoyo():
     from src.theme_palette import THEME_PRESETS
 
     # The agent's preset inventory is the shared palette module's tuple.
-    assert THEME_PRESETS[-2:] == ("monolith", "yoyo")
+    assert THEME_PRESETS[-3:-1] == ("monolith", "yoyo")
     assert "from src.theme_palette import THEME_PRESETS" in interaction
     assert "blueprint, monolith, yoyo" in schemas

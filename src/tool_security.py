@@ -150,7 +150,7 @@ _PLAN_MODE_KNOWN_MUTATORS = {
     "send_to_session", "pipeline", "manage_memory", "manage_skills",
     "manage_tasks", "manage_notes", "manage_endpoints", "manage_mcp",
     "manage_webhooks", "manage_tokens", "manage_settings", "manage_contact",
-    "manage_calendar", "api_call", "app_api", "ui_control",
+    "manage_calendar", "manage_trackers", "api_call", "app_api", "ui_control",
     "send_email", "reply_to_email", "bulk_email", "delete_email",
     "archive_email", "mark_email_read", "unsubscribe_email", "block_sender",
     "manage_email_state",

@@ -7104,6 +7104,11 @@ _DOMAIN_RULES = {
 - Notes/todos/reminders use `manage_notes`, not memory. However, when the prompt contains "Selected notes and todos", those notes are already available as reference context: use them directly and do not list/search/view them again or ask permission to use them. Use `manage_notes` only for a requested change or when a fresh lookup is genuinely needed.
 - Calendar create/update/delete should call `manage_calendar` with `action=list_calendars` first.
 - Recurring/automatic/scheduled requests create a `manage_tasks` task; do not just perform the action once.""",
+    "trackers": """\
+## Jobs and Parcels rules
+- Use `manage_trackers` for the user's saved job applications and tracked packages. List or search to get an id before updating.
+- Use dataset=jobs for applications, dataset=packages for parcels/deliveries, dataset=all for a combined overview.
+- Carrier status is supplied by the tracking provider; use action=refresh rather than inventing a status. Do not claim access to raw database secrets.""",
     "memory": """\
 ## Memory rules
 - Saved-memory lookups and changes use `manage_memory`; injected memory context is not a substitute for searching saved memories.
@@ -7147,6 +7152,7 @@ _DOMAIN_TOOL_MAP = {
     "email": {"list_email_accounts", "list_emails", "search_emails", "read_email", "download_attachment", "scan_email_unsubscribes", "scan_spam", "unsubscribe_email", "send_email", "reply_to_email", "draft_email", "draft_email_reply", "ai_draft_email_reply", "bulk_email", "block_sender", "manage_email_state", "archive_email", "delete_email", "mark_email_read", "resolve_contact", "manage_contact"},
     "cookbook": {"download_model", "serve_model", "serve_preset", "list_serve_presets", "list_served_models", "stop_served_model", "tail_serve_output", "list_downloads", "cancel_download", "search_hf_models", "list_cached_models", "list_cookbook_servers", "adopt_served_model"},
     "notes_calendar_tasks": {"manage_notes", "manage_calendar", "manage_tasks"},
+    "trackers": {"manage_trackers"},
     "memory": {"manage_memory"},
     "skills": {"manage_skills"},
     "ui": {"ui_control"},
@@ -7439,6 +7445,8 @@ def _compact_native_route_tools(
 
     if "notes_calendar_tasks" in domains:
         compact.update(original & _DOMAIN_TOOL_MAP["notes_calendar_tasks"])
+    if "trackers" in domains:
+        compact.add("manage_trackers")
 
     # The semantic selector and compact reducer must agree on explicit
     # multilingual state-management concepts. The classifier can label a
@@ -10616,6 +10624,7 @@ def _assistant_requested_followup(messages: List[Dict]) -> bool:
 
 
 _STATEFUL_TOOL_CARRYOVER_DOMAINS: dict[str, str] = {
+    "manage_trackers": "trackers",
     "manage_calendar": "notes_calendar_tasks",
     "manage_notes": "notes_calendar_tasks",
     "manage_tasks": "notes_calendar_tasks",
@@ -10845,7 +10854,7 @@ def _classify_agent_request(messages: List[Dict], last_user: str) -> Dict[str, o
     # actionable. Do not let the low-signal fast path discard their domain
     # before deterministic tool seeding runs.
     explicit_short_domain = bool(re.search(
-        r"\b(?:skill|skills|tdd|memory|memories|calendar|events?|tasks?|notes?|documents?|docs?|email|emails?|inbox|cookbook|theme|served\s+models?|models?\s+(?:currently\s+)?(?:running|serving|served))\b"
+        r"\b(?:skill|skills|tdd|memory|memories|calendar|events?|tasks?|notes?|documents?|docs?|email|emails?|inbox|cookbook|theme|jobs?|applications?|packages?|parcels?|deliveries|served\s+models?|models?\s+(?:currently\s+)?(?:running|serving|served))\b"
         r"|(?:邮件|收件箱|草稿|日历|日程|会议|预约|提醒|待办|笔记|清单|文档|联系人)",
         text,
         re.IGNORECASE,
@@ -10892,6 +10901,11 @@ def _classify_agent_request(messages: List[Dict], last_user: str) -> Dict[str, o
         domains.add("notes_calendar_tasks")
     if has(r"\b(calendar|events?|meeting|appointment|schedule)\b", r"(?:日历|日程|会议|预约)"):
         domains.add("notes_calendar_tasks")
+    if has(r"\b(?:my|saved|tracked)\b.{0,80}\b(?:job\s+applications?|applications?|jobs?|packages?|parcels?|deliveries|shipments?)\b",
+           r"\b(?:job|package|parcel)\s+tracker\b",
+           r"\b(?:list|show|find|check|update|edit|archive|add|create|track|refresh)\b.{0,70}\b(?:job\s+applications?|applications?|packages?|parcels?|shipments?)\b",
+           r"\b(?:change|update|edit|mark|archive|relabel)\b.{0,70}\b(?:that|this|the|my)\s+(?:job|application|package|parcel)\b"):
+        domains.add("trackers")
     if has(
         r"\b(?:saved\s+)?(?:memory|memories|remembered|recall)\b",
         r"\bremember\s+(?:this|that|my|the)\b",

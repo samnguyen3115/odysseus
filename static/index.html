@@ -16,6 +16,12 @@
   <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
   <script nonce="{{CSP_NONCE}}">
   window._odysseusLoadTime = Date.now();
+  if (location.pathname === '/chat') {
+    document.documentElement.classList.add('chat-route');
+    document.title = 'Chat — Odysseus';
+  } else if (location.pathname === '/') {
+    document.documentElement.classList.add('dashboard-route');
+  }
   // Stops iOS focus-zoom on every field; iOS still allows pinch-zoom, other platforms would not.
   (function(){
     var ua = navigator.userAgent || '';
@@ -26,6 +32,7 @@
   (function(){
     try {
       var t = JSON.parse(localStorage.getItem('odysseus-theme'));
+      document.documentElement.classList.toggle('theme-monochrome', !!t && t.name === 'monochrome');
       if (t && t.colors) {
         var s = document.documentElement.style;
         var c = t.colors;
@@ -279,8 +286,9 @@
   <link rel="stylesheet" href="/static/css/documents-gallery-editor.css?v=20260929csssplit">
   <link rel="stylesheet" href="/static/css/email-calendar-notes-tasks.css?v=20260929csssplit">
   <link rel="stylesheet" href="/static/css/cookbook-research-memory-settings.css?v=20260929csssplit">
-  <link rel="stylesheet" href="/static/css/dashboard.css?v=20261104dashboard1">
-  <link rel="modulepreload" href="/static/app.js?v=20260929csssplit">
+  <link rel="stylesheet" href="/static/css/dashboard.css?v=20261105dashboardchat4">
+  <link rel="stylesheet" href="/static/css/theme-monochrome.css?v=20261105monochrome5">
+  <link rel="modulepreload" href="/static/app.js?v=20261105dashboardchat4">
 <link rel="modulepreload" href="/static/js/chat.js?v=20260917toolttft1">
   <link rel="modulepreload" href="/static/js/ui.js?v=20260916largetoolscroll1">
   <link rel="modulepreload" href="/static/js/sessions.js">
@@ -796,6 +804,10 @@
         <svg class="sidebar-action-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="position:relative;left:-2px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         <span class="grow" style="position:relative;left:-3px;">New Chat</span>
       </div>
+      <a class="list-item dashboard-nav-link" href="/" title="Dashboard">
+        <svg class="sidebar-action-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>
+        <span class="grow">Dashboard</span>
+      </a>
       <div class="list-item" id="sidebar-search-btn" title="Search conversations (Ctrl+K)">
         <svg class="sidebar-action-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M21 21l-4.35-4.35"/></svg>
         <span class="grow" style="position:relative;left:-1px;">Search</span>
@@ -1054,6 +1066,17 @@
             </div>
           </section>
 
+          <aside id="dashboard-chat-widget" class="dashboard-card dashboard-chat-card" aria-label="Dashboard chat">
+            <section id="dashboard-chat-panel" class="dashboard-chat-panel" aria-label="Chat with Odysseus">
+              <header class="dashboard-chat-header"><strong>Odysseus</strong><a href="/chat">Full chat ↗</a></header>
+              <div class="dashboard-chat-messages"><p class="dashboard-chat-greeting">Hello! How can I assist you today?</p></div>
+              <form id="dashboard-chat-form" class="dashboard-chat-form">
+                <input id="dashboard-chat-message" type="text" maxlength="4000" placeholder="Type a message..." aria-label="Message Odysseus" autocomplete="off" required>
+                <button type="submit" aria-label="Send message">↑</button>
+              </form>
+            </section>
+          </aside>
+
           <section class="dashboard-card stages-card">
             <div class="dashboard-card-head"><div><p class="card-kicker">Next stages</p><h3>Upcoming OA & interviews</h3></div></div>
             <div id="dashboard-stages" class="stage-list"><div class="dashboard-loading">Checking upcoming events…</div></div>
@@ -1080,7 +1103,10 @@
           <button type="button" id="dashboard-ask"><span>⌁</span> Ask Odysseus</button>
         </footer>
       </div>
-      <button type="button" class="incognito-btn dashboard-incognito" id="incognito-btn" title="Enable Nobody mode — no memory or skill injection, no history saved">
+      <div id="welcome-setup" style="display:none"></div>
+    </div>
+    <div id="chat-page-welcome"><h2>Start a conversation</h2><p>Ask Odysseus anything.</p>
+      <button type="button" class="incognito-btn" id="incognito-btn" title="Enable Nobody mode — no memory or skill injection, no history saved">
         <svg class="eye-open" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
         </svg>
@@ -1089,7 +1115,7 @@
         </svg>
         <span class="incognito-label">Nobody</span>
       </button>
-      <div id="welcome-setup" style="display:none"></div>
+      <p class="chat-nobody-hint">Nobody mode skips memory and skills, and does not save chat history.</p>
     </div>
     <script nonce="{{CSP_NONCE}}">
     (function(){
@@ -2751,15 +2777,15 @@
 <script type="module" src="/static/js/codeRunner.js?v=20260831richtexttools91"></script>
 <script type="module" src="/static/js/chatStream.js?v=20260914pdfstrip1"></script>
 <script type="module" src="/static/js/chat.js?v=20260917toolttft1"></script>
-<script type="module" src="/static/js/dashboard.js?v=20261104dashboard1"></script>
+<script type="module" src="/static/js/dashboard.js?v=20261105dashboardchat4"></script>
 <script type="module" src="/static/js/cookbook.js"></script>
 <script src="/static/js/cookbookSchedule.js"></script>
 <script type="module" src="/static/js/search-chat.js"></script>
-<script type="module" src="/static/js/theme.js?v=20260911organsrain1"></script>
+<script type="module" src="/static/js/theme.js?v=20261105monochrome5"></script>
 <script type="module" src="/static/js/censor.js"></script>
 <script type="module" src="/static/js/settings.js?v=20260912writingstyle3"></script>
 <script type="module" src="/static/js/assistant.js?v=20260912firefoxjscleanup1"></script>
-<script type="module" src="/static/app.js?v=20260929csssplit"></script>  <!-- app.js must be LAST -->
+<script type="module" src="/static/app.js?v=20261105dashboardchat4"></script>  <!-- app.js must be LAST -->
   <script type="module" src="/static/js/init.js?v=20260829chatstyle12"></script>
 <script type="module" src="/static/js/a11y.js"></script>
 <script nonce="{{CSP_NONCE}}">if('serviceWorker' in navigator){navigator.serviceWorker.register('/static/sw.js?v=20260916autoscroll1').catch(()=>{});}</script>

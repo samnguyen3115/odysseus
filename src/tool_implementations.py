@@ -60,6 +60,7 @@ from src.tools.cookbook import (  # noqa: F401
 from src.tools.search import do_search_chats  # noqa: F401
 # Notes domain extracted to src/tools/notes.py (slice 1, #4082/#4071).
 from src.tools.notes import do_manage_notes  # noqa: F401
+from src.tools.trackers import do_manage_trackers  # noqa: F401
 # Calendar domain extracted to src/tools/calendar.py (slice 1, #4082/#4071).
 from src.tools.calendar import do_manage_calendar  # noqa: F401
 # Image domain extracted to src/tools/image.py (slice 1, #4082/#4071).

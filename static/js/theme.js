@@ -32,6 +32,10 @@ export const THEMES = {
   blueprint:  { bg:'#10263b', fg:'#e8f1f5', panel:'#091a29', border:'#48758d', red:'#e6b84a' },
   monolith:   { bg:'#202020', fg:'#d8d8d2', panel:'#121212', border:'#50504b', red:'#b6e05c' },
   yoyo:       { bg:'#211f23', fg:'#dfdbd7', panel:'#141415', border:'#3e5146', red:'#e09d6c' },
+  monochrome: { bg:'#000000', fg:'#ffffff', panel:'#0a0a0a', border:'#ffffff', red:'#757575',
+                advanced: { sendBtnBg:'#575757', sendBtnHover:'#686868',
+                            userBubbleBg:'#171717', aiBubbleBg:'#0a0a0a',
+                            inputBg:'#101010', brandColor:'#ffffff', brandMixTo:'#ffffff' } },
 };
 
 const DEFAULT_THEME = 'dark';
@@ -73,6 +77,7 @@ const THEME_DEFAULT_PATTERN = {
   blueprint:  'dots',
   monolith:   'perlin-flow',
   yoyo:       'ascii-fireflies',
+  monochrome: 'none',
 };
 
 // Default effect colors for specific themes (overrides --fg)
@@ -520,6 +525,7 @@ export function getSaved() {
 
 export function save(name, colors, opts) {
   const obj = { name, colors };
+  document.documentElement.classList.toggle('theme-monochrome', name === 'monochrome');
   if (opts) {
     if (normalizeFont(opts.font) !== DEFAULT_FONT) obj.font = normalizeFont(opts.font);
     if (opts.density && opts.density !== DEFAULT_DENSITY) obj.density = opts.density;
@@ -689,6 +695,7 @@ export function initThemeUI() {
 
   const saved = getSaved();
   const activeName = saved ? saved.name : DEFAULT_THEME;
+  document.documentElement.classList.toggle('theme-monochrome', activeName === 'monochrome');
   const customThemes = _loadCustomThemes();
 
   // Render preset swatches
@@ -2299,6 +2306,7 @@ async function _initWithSync() {
         serverTheme.colors = { ...THEMES[serverTheme.name] };
       }
       Storage.setJSON(LS_KEY, serverTheme);
+      document.documentElement.classList.toggle('theme-monochrome', serverTheme.name === 'monochrome');
       applyColors(serverTheme.colors);
     }
   }

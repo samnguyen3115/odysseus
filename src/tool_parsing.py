@@ -398,6 +398,7 @@ _TOOL_NAME_MAP = {
     "settings": "manage_settings",
     "preferences": "manage_settings",
     "manage_notes": "manage_notes",
+    "manage_trackers": "manage_trackers",
     "notes": "manage_notes",
     "todo": "manage_notes",
     "todos": "manage_notes",

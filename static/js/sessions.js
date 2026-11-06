@@ -6,7 +6,7 @@ import uiModule, { autoResize, styledPrompt } from './ui.js?v=20260916largetools
 import chatRenderer from './chatRenderer.js?v=20260914metricssummary1';
 import { providerLogo } from './providers.js';
 import { initModelPicker, updateModelPicker } from './modelPicker.js?v=20260909routeidentity1';
-import themeModule from './theme.js?v=20260911organsrain1';
+import themeModule from './theme.js?v=20261105monochrome2';
 import spinnerModule from './spinner.js';
 import { actionMenuRank, orderActionMenuItems, SELECT_MENU_ICON } from './actionMenuOrder.js';
 import { registerEscapeLayer, bindMenuDismiss } from './escMenuStack.js';

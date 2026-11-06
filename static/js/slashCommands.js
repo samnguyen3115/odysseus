@@ -15,7 +15,7 @@ import sessionModule from './sessions.js';
 import modelsModule from './models.js';
 import chatRenderer from './chatRenderer.js?v=20260914metricssummary1';
 import spinnerModule from './spinner.js';
-import themeModule from './theme.js?v=20260911organsrain1';
+import themeModule from './theme.js?v=20261105monochrome2';
 import documentModule from './document.js?v=20260916docctx2';
 import workspaceModule from './workspace.js';
 import settingsModule from './settings.js?v=20260912writingstyle3';

@@ -1,7 +1,7 @@
 /* Home dashboard: live job-search overview shown for a fresh chat. */
 #welcome-screen.dashboard-home {
   position: absolute;
-  inset: 48px 0 104px;
+  inset: 48px 0 0;
   width: 100%;
   max-width: none;
   transform: none;
@@ -73,17 +73,52 @@
 .dashboard-shortcuts a,.dashboard-shortcuts button { border:1px solid var(--border); background:transparent; color:color-mix(in srgb,var(--fg) 58%,transparent); text-decoration:none; border-radius:9px; padding:9px 12px; font-size:11px; cursor:pointer; }
 .dashboard-shortcuts span { color:var(--brand-color,var(--red)); margin-right:4px; }
 .dashboard-shortcuts a:hover,.dashboard-shortcuts button:hover { color:var(--fg); background:color-mix(in srgb,var(--panel) 75%,transparent); }
-.dashboard-incognito { position:fixed; right:18px; bottom:17px; margin:0; z-index:2; }
+:root.dashboard-route .chat-container .chat-input-bar { display:none !important; }
+:root.dashboard-route .chat-container.welcome-active .chat-top-bar { opacity:.3; }
+:root.chat-route #welcome-screen.dashboard-home { display:none !important; }
+:root.chat-route #chat-page-welcome { display:none; }
+:root.chat-route .chat-container.welcome-active #chat-page-welcome {
+  display:block; position:absolute; top:28%; left:50%; transform:translateX(-50%);
+  width:min(760px,calc(100% - 40px)); text-align:center; color:var(--fg);
+}
+#chat-page-welcome { display:none; }
+#chat-page-welcome h2 { font:500 clamp(28px,4vw,44px) Georgia,serif; margin:0 0 10px; }
+#chat-page-welcome p { margin:0; color:color-mix(in srgb,var(--fg) 58%,transparent); }
+#chat-page-welcome .incognito-btn { opacity:.75; margin-top:22px; }
+#chat-page-welcome .chat-nobody-hint { font-size:11px; margin:8px auto 0; max-width:300px; }
+:root.chat-route .chat-container.welcome-active .chat-input-bar {
+  width:min(800px,calc(100% - 32px)); max-width:800px; margin:0 auto 20vh;
+}
 
-.chat-container.welcome-active .chat-input-bar { margin:0 auto 14px; width:min(1180px,calc(100% - 44px)); max-width:1180px; }
-.chat-container.welcome-active .chat-top-bar { opacity:.3; }
+/* Dashboard chat is a grid card and scrolls with the rest of the page. */
+#dashboard-chat-widget { display:none; }
+:root.dashboard-route #dashboard-chat-widget {
+  display:flex; flex-direction:column; min-height:360px; padding:0; overflow:hidden;
+}
+.dashboard-chat-panel {
+  width:100%; min-height:360px; flex:1; display:flex; flex-direction:column;
+  background:var(--panel); color:var(--fg);
+}
+.dashboard-chat-header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--border); }
+.dashboard-chat-header strong { font-size:13px; }
+.dashboard-chat-header a { color:var(--fg); font-size:11px; text-decoration:none; }
+.dashboard-chat-header a:hover { text-decoration:underline; }
+.dashboard-chat-messages { flex:1; min-height:0; overflow:auto; padding:22px 18px; }
+.dashboard-chat-greeting { width:fit-content; max-width:90%; margin:0; padding:15px 17px; background:var(--red); color:#fff; border-radius:18px 18px 18px 4px; font-size:14px; line-height:1.45; }
+.dashboard-chat-form { display:flex; gap:10px; align-items:center; padding:14px 16px 16px; }
+.dashboard-chat-form input { flex:1; min-width:0; height:44px; padding:0 14px; border:1px solid var(--border); border-radius:24px; background:var(--bg); color:var(--fg); font:inherit; font-size:13px; }
+.dashboard-chat-form input::placeholder { color:color-mix(in srgb,var(--fg) 50%,transparent); }
+.dashboard-chat-form button { flex:0 0 44px; height:44px; border:0; border-radius:50%; background:var(--red); color:#fff; font-size:25px; cursor:pointer; }
+.dashboard-nav-link { color:var(--fg); text-decoration:none; }
 
 @media(max-width:900px){
   .dashboard-grid { grid-template-columns:1fr; }
-  .stages-card { order:2; }.applications-card { order:3; }.attention-card { order:4; }
+  .schedule-card { order:1; } .dashboard-chat-card { order:2; }
+  .stages-card { order:3; } .applications-card { order:4; }
+  .attention-card { order:5; } .packages-card { order:6; }
 }
 @media(max-width:700px){
-  #welcome-screen.dashboard-home { inset:43px 0 92px; padding:18px 14px 30px; }
+  #welcome-screen.dashboard-home { inset:43px 0 0; padding:18px 14px 30px; }
   .dashboard-hero { align-items:flex-start; flex-direction:column; margin-bottom:18px; }
   .dashboard-hero-actions { justify-content:flex-start; }
   .dashboard-stats { grid-template-columns:repeat(2,1fr); }
@@ -93,10 +128,9 @@
   .dashboard-card { padding:15px; }
   .dashboard-shortcuts { overflow-x:auto; padding-bottom:4px; }
   .dashboard-shortcuts > * { flex:0 0 auto; }
-  .dashboard-incognito { display:none; }
-  .chat-container.welcome-active .chat-input-bar { width:100%; margin:0; }
-  .chat-container.welcome-active:has(.chat-input-bar:focus-within) #welcome-screen,
-  .chat-container.welcome-active:has(textarea#message:not(:placeholder-shown)) #welcome-screen { opacity:0; pointer-events:none; }
+  :root.dashboard-route #dashboard-chat-widget { min-height:300px; }
+  .dashboard-chat-panel { min-height:300px; }
+  :root.chat-route .chat-container.welcome-active .chat-input-bar { width:100%; margin:0 0 16px; }
 }
 @media(max-height:650px){ #welcome-screen.dashboard-home { top:43px; opacity:1; } }
 @media(max-height:500px){ #welcome-screen.dashboard-home { top:43px; opacity:1; } }
