@@ -843,6 +843,45 @@ function initializeEventListeners() {
     }
   }
 
+  // Some legacy tools (notably Calendar and Cookbook) control their own
+  // visibility and can bypass ModalManager's open event. Observe the actual
+  // modal elements so the one-window rule is enforced from what is visibly
+  // on screen, regardless of which module opened it.
+  let _transientWindowSweep = false;
+  const _modalIsVisible = (modal) => !!modal
+    && !modal.classList.contains('hidden')
+    && getComputedStyle(modal).display !== 'none';
+  const _closeTransientModal = (modal) => {
+    if (!modal || !_modalIsVisible(modal)) return;
+    if (Modals.isRegistered(modal.id)) Modals.close(modal.id);
+    else dismissModal(modal);
+  };
+  const _closeOtherTransientWindows = (except = null) => {
+    if (_transientWindowSweep) return;
+    _transientWindowSweep = true;
+    try {
+      document.querySelectorAll('.modal').forEach((modal) => {
+        if (modal !== except) _closeTransientModal(modal);
+      });
+    } finally {
+      _transientWindowSweep = false;
+    }
+  };
+  const _transientWindowObserver = new MutationObserver((records) => {
+    // The last newly-visible modal is the one the user just requested.
+    const opened = records
+      .map((record) => record.target)
+      .filter((target) => target?.classList?.contains('modal'))
+      .filter(_modalIsVisible)
+      .at(-1);
+    if (opened) _closeOtherTransientWindows(opened);
+  });
+  _transientWindowObserver.observe(document.body, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['class', 'style'],
+  });
+
   // Click outside modal content → close modal
   document.addEventListener('click', (e) => {
     if (uiModule.isTouchInsideModal()) return; // suppress synthetic events from touch scrolling
@@ -855,7 +894,10 @@ function initializeEventListeners() {
 
   // Tool windows are intentionally one-use surfaces. Leaving the browser/app
   // closes the active window instead of preserving a stale stack for later.
-  window.addEventListener('blur', () => Modals.closeAll());
+  window.addEventListener('blur', () => {
+    _closeOtherTransientWindows(null);
+    Modals.closeAll();
+  });
 
   // Mobile bottom-sheet swipe-to-dismiss is handled by ui.js (header-only)
 

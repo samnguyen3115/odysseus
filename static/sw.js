@@ -7,7 +7,7 @@
 //   - Other static assets (images/fonts/libs): cache-first with bg refresh.
 //   - API / non-GET: never cached.
 // Bump CACHE_NAME whenever the precache list or SW logic changes.
-const CACHE_NAME = 'odysseus-v665-dashboard-card';
+const CACHE_NAME = 'odysseus-v666-transient-windows';
 
 // KaTeX resolves these from its own stylesheet, so caching the CSS without them
 // gives offline math fallback glyphs instead of proper typesetting.
@@ -62,7 +62,7 @@ const PRECACHE = [
   '/static/css/cookbook-research-memory-settings.css?v=20260929csssplit',
   '/static/css/dashboard.css?v=20261105dashboardchat4',
   '/static/css/theme-monochrome.css?v=20261105monochrome5',
-  '/static/app.js?v=20261105dashboardchat4',
+  '/static/app.js?v=20261106transientwindows2',
   '/static/js/dashboard.js?v=20261105dashboardchat4',
   '/static/js/storage.js',
   '/static/js/appConfig.js',
