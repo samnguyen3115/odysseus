@@ -32,6 +32,11 @@
   --font-family: 'JetBrains Mono', ui-monospace, monospace;
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   --code-font: 'JetBrains Mono', ui-monospace, monospace;
+  --od-text-xs: 12px;
+  --od-text-sm: 14px;
+  --od-text-md: 16px;
+  --od-text-lg: 18px;
+  --od-text-xl: 22px;
   font-size: 17px;
 }
 
@@ -41,37 +46,96 @@ body * {
 }
 
 body {
-  font-size: 15px !important;
+  font-size: var(--od-text-md) !important;
 }
 
 #sidebar,
 .icon-rail,
 .dashboard-shell {
-  font-size: 14px !important;
+  font-size: var(--od-text-md) !important;
 }
 
 #sidebar .list-item,
 #sidebar .section-title,
 .icon-rail-btn {
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+#sidebar .list-item {
+  min-height: 34px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+
+#sidebar .section-header-flex {
+  height: 36px !important;
+}
+
+#sidebar .list-item > svg,
+#sidebar .section-icon,
+#sidebar .sidebar-action-icon {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Sidebar rows used to shrink their child spans back to 9.75px after the row
+   itself was enlarged. Set every visible label explicitly so the whole nav
+   follows one scale. */
+#sidebar .list-item .grow,
+#sidebar .list-item > span:not(.sidebar-notif-dot),
+#sidebar .section-header-flex :is(h4, .section-title),
+#sidebar .models-row > span,
+#sidebar .sidebar-footer,
+#sidebar .sidebar-footer * {
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+#sidebar .list-item-plus-label,
+#sidebar .folder-count,
+#sidebar .session-show-more-btn {
+  font-size: var(--od-text-xs) !important;
+}
+
+#sidebar .sidebar-user-bar,
+#sidebar .sidebar-user-bar * {
+  font-size: 14px !important;
+}
+
+.chat-top-bar,
+.chat-top-bar :is(span, button, a, div) {
   font-size: 14px !important;
 }
 
 .modal-content,
 .notes-pane,
 .search-popup {
-  font-size: 15px !important;
+  font-size: var(--od-text-md) !important;
 }
 
 .modal-header h4,
 .notes-pane-title {
-  font-size: 18px !important;
+  font-size: 20px !important;
   line-height: 1.35 !important;
 }
 
 .modal-content :is(button, input, textarea, select),
 .notes-pane :is(button, input, textarea, select),
 .search-popup :is(button, input, textarea, select) {
-  font-size: 14px !important;
+  font-size: 15px !important;
+}
+
+.modal-content :is(label, p, li, td, th),
+.notes-pane :is(label, p, li, td, th),
+.search-popup :is(label, p, li, td, th) {
+  font-size: var(--od-text-sm) !important;
+}
+
+.modal-content :is(small, .hint, .meta, .muted),
+.notes-pane :is(small, .hint, .meta, .muted),
+.search-popup :is(small, .hint, .meta, .muted) {
+  font-size: 13px !important;
 }
 
 pre,
@@ -80,13 +144,142 @@ code,
   font-size: 13px !important;
 }
 
+body small {
+  font-size: 13px !important;
+}
+
+body label {
+  font-size: 14px !important;
+}
+
+/* Dashboard type scale. These components used fixed 8–12px values, so merely
+   enlarging the root left most of the page unchanged. */
+.dashboard-eyebrow,
+.card-kicker {
+  font-size: 13px !important;
+}
+
+.dashboard-hero h2 {
+  font-size: clamp(42px, 4vw, 58px) !important;
+  line-height: 1.08 !important;
+}
+
+.dashboard-subtitle {
+  font-size: 17px !important;
+  line-height: 1.5 !important;
+}
+
+.dashboard-action,
+.dashboard-shortcuts :is(a, button) {
+  font-size: 15px !important;
+}
+
+.dashboard-stats span {
+  font-size: 14px !important;
+}
+
+.dashboard-stats strong {
+  font-size: 34px !important;
+}
+
+.dashboard-stats small {
+  font-size: 13px !important;
+}
+
+.dashboard-card h3 {
+  font-size: 19px !important;
+}
+
+.card-link {
+  font-size: 14px !important;
+}
+
+.mini-calendar .month-label {
+  font-size: 16px !important;
+}
+
+.mini-calendar .dow {
+  font-size: 12px !important;
+}
+
+.mini-calendar .day {
+  font-size: 14px !important;
+}
+
+.event-date strong {
+  font-size: 18px !important;
+}
+
+.event-date span {
+  font-size: 11px !important;
+}
+
+.row-copy strong {
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+}
+
+.row-copy small {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+.stage-icon {
+  font-size: 15px !important;
+}
+
+.status-pill {
+  font-size: 12px !important;
+}
+
+.dashboard-empty,
+.dashboard-loading {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.dashboard-chat-header strong {
+  font-size: 16px !important;
+}
+
+.dashboard-chat-header a {
+  font-size: 14px !important;
+}
+
+.dashboard-chat-greeting {
+  font-size: 16px !important;
+}
+
+.dashboard-chat-form input {
+  font-size: 15px !important;
+}
+
+#chat-page-welcome .chat-nobody-hint {
+  font-size: 14px !important;
+}
+
+/* Jobs and Packages are rendered in same-origin modal frames. */
+main.shell {
+  font-size: var(--od-text-md) !important;
+}
+
+main.shell :is(label, .hint, .message, .meta, .tracking, .company, .carrier) {
+  font-size: var(--od-text-sm) !important;
+}
+
+main.shell :is(button, input, textarea, select) {
+  font-size: 15px !important;
+}
+
 @media (max-width: 768px) {
   :root { font-size: 16px; }
-  body { font-size: 14px !important; }
+  body { font-size: 15px !important; }
   #sidebar,
   .icon-rail,
   .dashboard-shell,
   .modal-content,
   .notes-pane,
-  .search-popup { font-size: 14px !important; }
+  .search-popup { font-size: 15px !important; }
+
+  .dashboard-hero h2 { font-size: clamp(36px, 11vw, 48px) !important; }
 }
