@@ -870,43 +870,71 @@ function initializeEventListeners() {
 
   const _normalizeTransientModal = (modal) => {
     if (!modal) return;
-    modal.classList.remove('modal-left-docked', 'modal-right-docked', 'email-snap-left');
-    document.body.classList.remove('left-dock-active', 'right-dock-active', 'email-doc-split-active');
+    ['modal-left-docked', 'modal-right-docked', 'email-snap-left']
+      .filter((className) => modal.classList.contains(className))
+      .forEach((className) => modal.classList.remove(className));
+    ['left-dock-active', 'right-dock-active', 'email-doc-split-active']
+      .filter((className) => document.body.classList.contains(className))
+      .forEach((className) => document.body.classList.remove(className));
     ['position', 'left', 'right', 'top', 'bottom', 'width', 'height', 'transform']
+      .filter((prop) => modal.style.getPropertyValue(prop))
       .forEach((prop) => modal.style.removeProperty(prop));
     const content = modal.querySelector(':scope > .modal-content')
       || modal.querySelector(':scope > [class*="modal-content"]')
       || modal.firstElementChild;
     if (!content) return;
-    content.classList.remove('window-resizing', 'notes-window-fullscreen');
+    ['window-resizing', 'notes-window-fullscreen']
+      .filter((className) => content.classList.contains(className))
+      .forEach((className) => content.classList.remove(className));
     ['position', 'left', 'right', 'top', 'bottom', 'margin', 'transform']
+      .filter((prop) => content.style.getPropertyValue(prop))
       .forEach((prop) => content.style.removeProperty(prop));
   };
 
-  const _transientWindowObserver = new MutationObserver((records) => {
-    // The last newly-visible modal is the one the user just requested.
-    const candidates = records.flatMap((record) => [
-      record.target,
-      ...[...(record.addedNodes || [])].filter((node) => node?.nodeType === 1),
-    ]);
-    const opened = candidates
-      .flatMap((target) => target?.classList?.contains('modal')
-        ? [target]
-        : [...(target?.querySelectorAll?.('.modal') || [])])
-      .filter((target) => target?.classList?.contains('modal'))
-      .filter(_modalIsVisible)
-      .at(-1);
-    if (opened) {
-      _normalizeTransientModal(opened);
-      _closeOtherTransientWindows(opened);
+  // Track closed → open transitions. The previous implementation reacted to
+  // every style mutation on an already-open modal, which could feed its own
+  // cleanup mutations back into Firefox and monopolize the main thread.
+  const _transientVisibility = new WeakMap();
+  const _transientModalObservers = new WeakMap();
+
+  const _handleTransientVisibility = (modal) => {
+    const visible = modal.isConnected && _modalIsVisible(modal);
+    const wasVisible = _transientVisibility.get(modal) === true;
+    _transientVisibility.set(modal, visible);
+    if (!visible || wasVisible) return;
+    _normalizeTransientModal(modal);
+    _closeOtherTransientWindows(modal);
+  };
+
+  const _observeTransientModal = (modal, newlyAdded = false) => {
+    if (!modal?.classList?.contains('modal')) return;
+    if (!_transientModalObservers.has(modal)) {
+      const observer = new MutationObserver(() => _handleTransientVisibility(modal));
+      observer.observe(modal, { attributes: true, attributeFilter: ['class', 'style'] });
+      _transientModalObservers.set(modal, observer);
     }
-  });
-  _transientWindowObserver.observe(document.body, {
-    subtree: true,
-    childList: true,
-    attributes: true,
-    attributeFilter: ['class', 'style'],
-  });
+    _transientVisibility.set(modal, newlyAdded ? false : _modalIsVisible(modal));
+    if (newlyAdded) _handleTransientVisibility(modal);
+  };
+
+  document.querySelectorAll('.modal').forEach((modal) => _observeTransientModal(modal));
+
+  // Watch only DOM insertions/removals globally. Attribute observation is
+  // scoped to each modal, avoiding work for unrelated calendar/chat updates.
+  new MutationObserver((records) => {
+    records.forEach((record) => {
+      record.addedNodes.forEach((node) => {
+        if (node?.nodeType !== 1) return;
+        if (node.classList?.contains('modal')) _observeTransientModal(node, true);
+        node.querySelectorAll?.('.modal').forEach((modal) => _observeTransientModal(modal, true));
+      });
+      record.removedNodes.forEach((node) => {
+        if (node?.nodeType !== 1) return;
+        if (node.classList?.contains('modal')) _transientVisibility.set(node, false);
+        node.querySelectorAll?.('.modal').forEach((modal) => _transientVisibility.set(modal, false));
+      });
+    });
+  }).observe(document.body, { subtree: true, childList: true });
 
   window.addEventListener('odysseus:modal-opened', (event) => {
     if (searchChatModule?.isOpen?.()) searchChatModule.closeSearch();
