@@ -97,6 +97,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         is_tool_render = path.startswith("/api/tools/") and path.endswith("/render")
         # Document library PDF preview endpoint
         is_document_pdf_preview = path.startswith("/api/document/") and path.endswith("/render-pdf")
+        # Full-page tools that the dashboard intentionally hosts in a
+        # same-origin modal iframe. They remain unavailable to other origins.
+        is_internal_page_frame = path in {"/jobs", "/packages"}
         # Visual report pages are self-contained HTML — need inline scripts + external images
         is_report = path.startswith("/api/research/report/")
 
@@ -131,7 +134,10 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "frame-ancestors 'self'"
             )
         else:
-            response.headers["X-Frame-Options"] = "DENY"
+            response.headers["X-Frame-Options"] = (
+                "SAMEORIGIN" if is_internal_page_frame else "DENY"
+            )
+            frame_ancestors = "'self'" if is_internal_page_frame else "'none'"
             # NOTE: `style-src 'unsafe-inline'` is intentionally retained.
             # `static/index.html` and `static/login.html` ship inline <style>
             # blocks, and several JS modules build runtime `style=""` attrs.
@@ -147,6 +153,6 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
                 "media-src 'self' blob:; "
                 "connect-src 'self'; "
                 "frame-src 'self'; "
-                "frame-ancestors 'none'"
+                f"frame-ancestors {frame_ancestors}"
             )
         return response

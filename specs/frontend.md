@@ -47,7 +47,7 @@ The browser runtime is a static native-ES-module SPA served by FastAPI, without 
 
 `static/index.html` owns the DOM shell and script loading order. It loads browser ES modules directly. Current boot order includes nonce-bearing inline boot scripts, self-hosted highlight.js, modulepreloads, ordered module script tags, `static/app.js`, `static/js/init.js`, `static/js/a11y.js`, workspace/chat helpers, provider device-flow helpers, and service-worker registration. KaTeX and Mermaid are vendored under `static/lib` and injected only on first real math/diagram use rather than loading in the initial HTML.
 
-The two first-paint Fira Code faces are preloaded so the shell does not wait for later CSS discovery. `static/js/startupShell.js` lets the visible shell initialize before session loading completes; session/transcript hydration is deferred and coordinated by `static/js/sessions.js` plus history/session routes rather than blocking first paint.
+The two first-paint JetBrains Mono faces are preloaded so the shell does not wait for later CSS discovery. `static/js/startupShell.js` lets the visible shell initialize before session loading completes; session/transcript hydration is deferred and coordinated by `static/js/sessions.js` plus history/session routes rather than blocking first paint.
 
 Exact script URL identity matters. Versioned script tags, unversioned imports, and service-worker precache entries must stay aligned. `static/sw.js` deliberately separates first-paint `PRECACHE` from lazy `PANEL_PRECACHE`; the latter contains the image-editor module graph so an editor never opened online can still open offline. The Notes feature graph and shared confetti are explicitly in `PRECACHE`, together with their exact legacy helper URLs. KaTeX scripts/styles/fonts are also precached. Current service-worker coverage is not a generated full module-graph manifest, so changes still need direct verification.
 
@@ -58,6 +58,8 @@ New extracted owners include `static/js/turnRendering.js` for live/canonical tur
 ## Security Policy
 
 `core/middleware.py` owns CSP and security headers. `app.py` injects the per-request nonce into served HTML. New inline scripts or external scripts/styles/images/media must fit the CSP contract or explicitly update it.
+
+The Jobs and Packages full-page tools are also mounted inside same-origin dashboard modal frames. Their routes use `X-Frame-Options: SAMEORIGIN` and `frame-ancestors 'self'`; unrelated pages retain the default deny policy.
 
 `/static/*` is public/auth-exempt. Frontend privilege gates are display-only; backend routes enforce authorization.
 

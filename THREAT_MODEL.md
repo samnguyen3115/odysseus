@@ -75,7 +75,7 @@ Two exemptions apply even when the gate is on, both deliberate:
 
 `core/middleware.py:SecurityHeadersMiddleware` sets headers on every response:
 
-- `X-Frame-Options: DENY` + `frame-ancestors 'none'` on all routes except tool-render iframes (which are sandboxed at the HTML level).
+- `X-Frame-Options: DENY` + `frame-ancestors 'none'` on all routes except tool-render iframes (sandboxed at the HTML level), document PDF previews, and the `/jobs` and `/packages` dashboard tools. The latter three use `SAMEORIGIN` plus `frame-ancestors 'self'`; third-party embedding remains blocked.
 - `X-Content-Type-Options: nosniff` and `Referrer-Policy: no-referrer` everywhere.
 - **CSP:** nonce-based `script-src 'self' 'nonce-{nonce}' https://cdn.jsdelivr.net`. `style-src 'unsafe-inline'` is intentionally kept — `static/index.html` ships inline `<style>` blocks and JS modules set `style=""` attributes at runtime. Inline styles do not execute script so the risk is visual-only. Removing this requires templating the HTML files and auditing all JS-set style attributes.
 

@@ -70,6 +70,18 @@ async def test_doc_render_pdf_keeps_baseline_security_headers():
     assert resp.headers.get("Referrer-Policy") == "no-referrer"
 
 
+async def test_dashboard_page_modals_allow_same_origin_framing_only():
+    for path in ["/jobs", "/packages"]:
+        resp = await _dispatch(path)
+        assert resp.headers.get("X-Frame-Options") == "SAMEORIGIN"
+        assert "frame-ancestors 'self'" in resp.headers.get("Content-Security-Policy", "")
+
+    for path in ["/jobs-preview", "/packages/export"]:
+        resp = await _dispatch(path)
+        assert resp.headers.get("X-Frame-Options") == "DENY"
+        assert "frame-ancestors 'none'" in resp.headers.get("Content-Security-Policy", "")
+
+
 async def test_doc_export_pdf_still_frame_blocked():
     """Assert that the export-pdf path remains frame-blocked."""
     resp = await _dispatch("/api/document/abc-123/export-pdf")

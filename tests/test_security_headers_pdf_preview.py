@@ -34,3 +34,19 @@ def test_document_pdf_preview_can_be_framed_by_same_origin():
     assert response.headers["Content-Security-Policy"] == (
         "default-src 'none'; frame-ancestors 'self'"
     )
+
+
+def test_dashboard_tool_pages_can_be_framed_only_by_same_origin():
+    for path in ("/jobs", "/packages"):
+        response = _client().get(path)
+
+        assert response.headers["X-Frame-Options"] == "SAMEORIGIN"
+        assert "frame-ancestors 'self'" in response.headers["Content-Security-Policy"]
+
+
+def test_similar_page_paths_remain_unframeable():
+    for path in ("/jobs-preview", "/packages/export"):
+        response = _client().get(path)
+
+        assert response.headers["X-Frame-Options"] == "DENY"
+        assert "frame-ancestors 'none'" in response.headers["Content-Security-Policy"]
